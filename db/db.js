@@ -34,8 +34,8 @@ function initDb() {
     console.log('Base de donnees initialisee');
 }
 
-// Executer les migrations d'abord, puis initialiser
-runMigrations();
+// Initialiser d'abord, puis executer les migrations
 initDb();
+runMigrations();
 
 module.exports = db;

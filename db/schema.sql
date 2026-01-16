@@ -19,12 +19,13 @@ CREATE TABLE IF NOT EXISTS users (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Table ALLO (sans la colonne theme qui sera ajoutee par migration)
+-- Table ALLO
 CREATE TABLE IF NOT EXISTS allos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     bde_list_id INTEGER NOT NULL REFERENCES bde_lists(id),
     title TEXT NOT NULL,
     description TEXT,
+    theme TEXT DEFAULT 'Autres Allo',
     conditions_text TEXT,
     status TEXT CHECK(status IN ('DRAFT', 'PUBLISHED', 'CLOSED')) DEFAULT 'DRAFT',
     opens_at DATETIME,
