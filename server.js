@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 3000;
 // Configuration EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('trust proxy', 1);
 
 // Middleware
 app.use(express.json());
@@ -20,7 +21,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: 'auto',
         maxAge: 24 * 60 * 60 * 1000 // 24 heures
     }
 }));
