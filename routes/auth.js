@@ -6,7 +6,7 @@ const router = express.Router();
 const gatePassword = process.env.BDE_GATE_PASSWORD || 'Meglau29alger16#';
 
 function requireBdeGate(req, res, next) {
-    if (req.session.bdeGate) {
+    if (req.session.bdeGate || req.session.userId) {
         return next();
     }
 
