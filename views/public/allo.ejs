@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= allo.title %> - ALLO Seker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>* { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body>
+    <nav class="navbar py-4">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center">
+                <a href="/live" class="text-gray-400 hover:text-white text-sm transition-colors">Live</a>
+                <a href="/">
+                    <img src="/images/logo.png" alt="ALLO Seker" class="h-16 md:h-20">
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="/mes-allos" class="text-gray-400 hover:text-white text-sm transition-colors">Mes ALLO</a>
+                    <% if (isAuthenticated) { %>
+                        <a href="/bde/dashboard" class="text-gray-400 hover:text-white text-sm transition-colors">Dashboard</a>
+                        <a href="/auth/logout" class="text-gray-400 hover:text-white text-sm transition-colors">Deconnexion</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto px-4 sm:px-6 py-12">
+        <a href="/live" class="inline-flex items-center gap-2 text-gray-400 hover:text-white text-sm mb-8 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Retour
+        </a>
+
+        <div class="card rounded-xl overflow-hidden">
+            <div class="p-6 border-b border-gray-700">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h1 class="text-2xl font-bold text-white mb-1"><%= allo.title %></h1>
+                        <p class="text-gray-400 text-sm"><%= allo.bde_list_name %></p>
+                        <% if (allo.theme === 'Allo Nourriture') { %>
+                            <span class="theme-nourriture text-xs px-2 py-0.5 rounded-full font-medium mt-2 inline-block">Nourriture</span>
+                        <% } else if (allo.theme === 'Allo Pôle') { %>
+                            <span class="theme-Pôle text-xs px-2 py-0.5 rounded-full font-medium mt-2 inline-block">Pôle</span>
+                        <% } else { %>
+                            <span class="theme-autres text-xs px-2 py-0.5 rounded-full font-medium mt-2 inline-block">Autres</span>
+                        <% } %>
+                    </div>
+                    <% if (availableSlots.length > 0 && timeStatus === 'open') { %>
+                        <span class="badge badge-success"><%= availableSlots.length %> dispo</span>
+                    <% } else if (timeStatus === 'not_yet') { %>
+                        <span class="badge badge-warning">Bientot</span>
+                    <% } else { %>
+                        <span class="badge badge-danger">Complet</span>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <% if (allo.description) { %>
+                    <div>
+                        <h2 class="text-sm font-medium text-gray-400 mb-2">Description</h2>
+                        <p class="text-gray-200"><%= allo.description %></p>
+                    </div>
+                <% } %>
+
+                <% if (allo.conditions_text) { %>
+                    <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                        <h2 class="text-sm font-medium text-yellow-500 mb-1">Conditions</h2>
+                        <p class="text-yellow-200/80 text-sm"><%= allo.conditions_text %></p>
+                    </div>
+                <% } %>
+
+                <% if (allo.assigned_first_name) { %>
+                    <div>
+                        <p class="text-xs text-gray-500 mb-1">Réalisé par</p>
+                        <p class="text-gray-200 text-sm"><%= allo.assigned_first_name %> <%= allo.assigned_last_name %></p>
+                        <% if (allo.assigned_phone) { %>
+                            <a href="tel:<%= allo.assigned_phone %>" class="text-pink-400 text-xs hover:text-pink-300"><%= allo.assigned_phone %></a>
+                        <% } %>
+                    </div>
+                <% } %>
+
+                <% if (timeStatus === 'not_yet') { %>
+                    <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 text-center">
+                        <p class="text-yellow-500 font-medium"><%= timeMessage %></p>
+                        <p class="text-yellow-200/60 text-sm mt-1">Les reservations ne sont pas encore ouvertes</p>
+                    </div>
+                <% } else if (timeStatus === 'closed') { %>
+                    <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-center">
+                        <p class="text-red-500 font-medium">ALLO Fermé</p>
+                    </div>
+                <% } %>
+
+                <div>
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-sm font-medium text-gray-400">Slots</h2>
+                        <span class="text-xs text-gray-500"><%= availableSlots.length %>/<%= slots.length %> disponibles</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <% slots.forEach((slot, index) => { %>
+                            <div class="slot <%= slot.is_claimed ? 'slot-taken' : 'slot-available' %>">
+                                <%= index + 1 %>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+
+                <% if (availableSlots.length > 0 && timeStatus === 'open') { %>
+                    <div class="divider pt-6">
+                        <h2 class="text-lg font-semibold text-white mb-4">Réserver</h2>
+
+                        <div id="shotgun-message" class="hidden mb-4 p-4 rounded-lg text-center"></div>
+
+                        <form id="shotgun-form" class="space-y-4">
+                            <input type="hidden" id="slot-id" value="<%= availableSlots[0].id %>">
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="firstName" class="block text-sm text-gray-400 mb-1">Prenom</label>
+                                    <input type="text" id="firstName" name="firstName" required
+                                           class="input w-full px-3 py-2 rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <label for="lastName" class="block text-sm text-gray-400 mb-1">Nom</label>
+                                    <input type="text" id="lastName" name="lastName" required
+                                           class="input w-full px-3 py-2 rounded-lg text-sm">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="phone" class="block text-sm text-gray-400 mb-1">Telephone</label>
+                                <input type="tel" id="phone" name="phone" required placeholder="06 XX XX XX XX"
+                                       class="input w-full px-3 py-2 rounded-lg text-sm">
+                            </div>
+
+                            <button type="submit" id="shotgun-btn"
+                                    class="btn-primary w-full text-white font-semibold py-3 rounded-lg">
+                                Réserver
+                            </button>
+                        </form>
+                    </div>
+                <% } else if (availableSlots.length === 0) { %>
+                    <div class="divider pt-6 text-center">
+                        <p class="text-red-400 font-medium">Tous les slots sont pris</p>
+                        <a href="/live" class="inline-block mt-4 btn-secondary text-gray-300 px-6 py-2 rounded-lg text-sm">
+                            Voir les autres ALLO
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-gray-800 mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <img src="/images/logo.png" alt="ALLO Seker" class="h-10 opacity-60">
+                <div class="flex items-center gap-4">
+                    <% if (!isAuthenticated) { %>
+                        <a href="/auth/login" class="text-gray-400 hover:text-white text-sm transition-colors">Espace BDE</a>
+                    <% } %>
+                    <p class="text-gray-500 text-sm">Developed by Wendy Technology</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/shotgun.js"></script>
+</body>
+</html>

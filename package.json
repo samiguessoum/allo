@@ -1,0 +1,21 @@
+{
+  "name": "allo",
+  "version": "1.0.0",
+  "description": "Plateforme de shotgun pour les campagnes BDE",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["bde", "shotgun", "campagne"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^12.6.0",
+    "ejs": "^4.0.1",
+    "express": "^5.2.1",
+    "express-session": "^1.18.2"
+  }
+}

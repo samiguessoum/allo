@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes ALLO - ALLO Seker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>* { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body>
+    <nav class="navbar py-4">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center">
+                <a href="/live" class="text-gray-400 hover:text-white text-sm transition-colors">Live</a>
+                <a href="/">
+                    <img src="/images/logo.png" alt="ALLO Seker" class="h-16 md:h-20">
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="/mes-allos" class="text-white font-medium text-sm">Mes ALLO</a>
+                    <% if (isAuthenticated) { %>
+                        <a href="/bde/dashboard" class="text-gray-400 hover:text-white text-sm transition-colors">Dashboard</a>
+                        <a href="/auth/logout" class="text-gray-400 hover:text-white text-sm transition-colors">Deconnexion</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto px-4 sm:px-6 py-12">
+        <div class="mb-10">
+            <h1 class="text-3xl font-bold text-white mb-2">Mes ALLO</h1>
+            <p class="text-gray-400">Retrouve tes reservations</p>
+        </div>
+
+        <div class="card rounded-xl p-6 mb-8">
+            <form action="/mes-allos" method="POST" class="flex flex-col sm:flex-row gap-3 items-center">
+                <input type="tel" name="phone" placeholder="Ton numero de telephone"
+                       value="<%= phone || '' %>"
+                       class="input w-full sm:flex-1 px-4 py-2.5 rounded-lg text-sm">
+                <button type="submit" class="btn-primary text-white w-full sm:w-auto px-6 py-2.5 rounded-lg font-medium text-sm">
+                    Rechercher
+                </button>
+            </form>
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="text-red-400 text-sm mt-3"><%= error %></p>
+            <% } %>
+        </div>
+
+        <% if (slots !== null) { %>
+            <% if (slots.length === 0) { %>
+                <div class="card rounded-xl p-10 text-center">
+                    <p class="text-gray-400">Aucune reservation trouvee pour ce numero</p>
+                    <a href="/live" class="inline-block mt-4 btn-secondary text-gray-300 px-6 py-2 rounded-lg text-sm">
+                        Voir les ALLO disponibles
+                    </a>
+                </div>
+            <% } else { %>
+                <p class="text-gray-400 text-sm mb-4"><%= slots.length %> reservation(s)</p>
+                <div class="space-y-4">
+                    <% slots.forEach(slot => { %>
+                        <div class="card rounded-xl overflow-hidden">
+                            <div class="bg-green-500/10 border-b border-green-500/20 px-5 py-3">
+                                <p class="text-green-500 text-sm font-medium">Reservation confirmee</p>
+                            </div>
+                            <div class="p-5">
+                                <h3 class="text-lg font-semibold text-white mb-3"><%= slot.allo_title %></h3>
+
+                                <% if (slot.allo_description) { %>
+                                    <p class="text-gray-400 text-sm mb-4"><%= slot.allo_description %></p>
+                                <% } %>
+
+                                <% if (slot.conditions_text) { %>
+                                    <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-4">
+                                        <p class="text-yellow-200/80 text-sm"><%= slot.conditions_text %></p>
+                                    </div>
+                                <% } %>
+
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p class="text-gray-500 text-xs mb-1">Liste BDE</p>
+                                        <p class="text-gray-300"><%= slot.bde_list_name %></p>
+                                    </div>
+                                    <% if (slot.assigned_first_name) { %>
+                                        <div>
+                                            <p class="text-gray-500 text-xs mb-1">Réalisé par</p>
+                                            <p class="text-gray-300"><%= slot.assigned_first_name %> <%= slot.assigned_last_name %></p>
+                                            <% if (slot.assigned_phone) { %>
+                                                <a href="tel:<%= slot.assigned_phone %>" class="text-pink-400 text-xs hover:text-pink-300"><%= slot.assigned_phone %></a>
+                                            <% } %>
+                                        </div>
+                                    <% } %>
+                                </div>
+
+                                <p class="text-xs text-gray-500 mt-4">
+                                    Reserve le <%= new Date(slot.claimed_at).toLocaleString('fr-FR') %>
+                                </p>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } %>
+        <% } %>
+    </main>
+
+    <footer class="border-t border-gray-800 mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <img src="/images/logo.png" alt="ALLO Seker" class="h-10 opacity-60">
+                <div class="flex items-center gap-4">
+                    <% if (!isAuthenticated) { %>
+                        <a href="/auth/login" class="text-gray-400 hover:text-white text-sm transition-colors">Espace BDE</a>
+                    <% } %>
+                    <p class="text-gray-500 text-sm">Developed by Wendy Technology</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

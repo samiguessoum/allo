@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur - ALLO Seker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>* { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body>
+    <nav class="navbar py-4">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center">
+                <a href="/live" class="text-gray-400 hover:text-white text-sm transition-colors">Live</a>
+                <a href="/">
+                    <img src="/images/logo.png" alt="ALLO Seker" class="h-16 md:h-20">
+                </a>
+                <a href="/mes-allos" class="text-gray-400 hover:text-white text-sm transition-colors">Mes ALLO</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-md mx-auto px-4 sm:px-6 py-24 text-center">
+        <div class="card rounded-xl p-10">
+            <h1 class="text-2xl font-bold text-white mb-3">Erreur</h1>
+            <p class="text-gray-400 mb-6"><%= message %></p>
+            <a href="/live" class="btn-primary inline-block text-white px-6 py-2.5 rounded-lg font-medium text-sm">
+                Retour aux ALLO
+            </a>
+        </div>
+    </main>
+
+    <footer class="border-t border-gray-800 mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <img src="/images/logo.png" alt="ALLO Seker" class="h-10 opacity-60">
+                <div class="flex items-center gap-4">
+                    <a href="/auth/login" class="text-gray-400 hover:text-white text-sm transition-colors">Espace BDE</a>
+                    <p class="text-gray-500 text-sm">Developed by Wendy Technology</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

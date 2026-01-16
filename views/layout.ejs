@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title + ' - ' : '' %>ALLO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-indigo-600 text-white shadow-lg">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-4">
+                <a href="/" class="text-2xl font-bold">ALLO</a>
+                <div class="flex items-center space-x-4">
+                    <a href="/live" class="hover:text-indigo-200">Live</a>
+                    <a href="/mes-allos" class="hover:text-indigo-200">Mes ALLO</a>
+                    <% if (isAuthenticated) { %>
+                        <span class="text-indigo-200">|</span>
+                        <a href="/bde/dashboard" class="hover:text-indigo-200">Dashboard BDE</a>
+                        <span class="text-indigo-200 text-sm">(<%= user.firstName %>)</span>
+                        <a href="/auth/logout" class="bg-indigo-500 hover:bg-indigo-400 px-3 py-1 rounded">Déconnexion</a>
+                    <% } else { %>
+                        <span class="text-indigo-200">|</span>
+                        <a href="/auth/login" class="bg-indigo-500 hover:bg-indigo-400 px-3 py-1 rounded">BDE Login</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <main class="container mx-auto px-4 py-8">
+        <%- body %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 py-4 mt-8">
+        <div class="container mx-auto px-4 text-center">
+            <p>ALLO - Plateforme Shotgun BDE</p>
+        </div>
+    </footer>
+
+    <script src="/js/shotgun.js"></script>
+</body>
+</html>

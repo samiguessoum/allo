@@ -1,0 +1,336 @@
+/* ALLO - Design professionnel */
+
+:root {
+    --pink: #E91E8C;
+    --pink-light: #F472B6;
+    --purple: #8B5CF6;
+    --cyan: #06B6D4;
+    --dark: #0f172a;
+    --dark-light: #1e293b;
+    --gray-800: #1e293b;
+    --gray-700: #334155;
+    --gray-600: #475569;
+    --gray-400: #94a3b8;
+    --gray-200: #e2e8f0;
+    --gray-100: #f1f5f9;
+}
+
+body {
+    background: var(--dark);
+    color: #fff;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Cartes */
+.card {
+    background: var(--dark-light);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    border-color: rgba(233, 30, 140, 0.3);
+    box-shadow: 0 4px 20px rgba(233, 30, 140, 0.1);
+}
+
+.card-glass {
+    background: #fff;
+    color: var(--dark);
+}
+
+/* Bouton principal */
+.btn-primary {
+    background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Bouton shotgun */
+.btn-shotgun {
+    background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+    transition: all 0.2s ease;
+}
+
+.btn-shotgun:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(233, 30, 140, 0.3);
+}
+
+/* Bouton secondaire */
+.btn-secondary {
+    background: linear-gradient(135deg, var(--purple) 0%, var(--cyan) 100%);
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    opacity: 0.9;
+}
+
+/* Badges */
+.badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.badge-success {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10B981;
+}
+
+.badge-danger {
+    background: rgba(239, 68, 68, 0.2);
+    color: #EF4444;
+}
+
+.badge-warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: #F59E0B;
+}
+
+.badge-neutral {
+    background: rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+}
+
+.badge-available {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10B981;
+}
+
+.badge-full {
+    background: rgba(239, 68, 68, 0.2);
+    color: #EF4444;
+}
+
+/* Inputs - Dark theme (public pages) */
+.input {
+    background: var(--dark);
+    border: 1px solid var(--gray-700);
+    color: #fff;
+    transition: all 0.2s ease;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--pink);
+    box-shadow: 0 0 0 3px rgba(233, 30, 140, 0.1);
+}
+
+.input::placeholder {
+    color: var(--gray-400);
+}
+
+select.input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding-right: 2.25rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23ffffff' d='M1.41 0L6 4.59 10.59 0 12 1.41 6 7.41 0 1.41z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.75rem 0.5rem;
+}
+
+/* Inputs - Light theme (forms sur fond blanc) */
+.input-light {
+    background: #fff;
+    border: 2px solid var(--gray-200);
+    color: var(--dark);
+    transition: all 0.2s ease;
+}
+
+.input-light:focus {
+    border-color: var(--pink);
+    box-shadow: 0 0 0 3px rgba(233, 30, 140, 0.1);
+    outline: none;
+}
+
+.input-light::placeholder {
+    color: var(--gray-400);
+}
+
+/* Slots */
+.slot {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.slot-available {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.slot-taken {
+    background: rgba(148, 163, 184, 0.1);
+    color: var(--gray-400);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* Tables */
+.table-header {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.table-row {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.15s ease;
+}
+
+.table-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Progress bar */
+.progress-bar {
+    height: 4px;
+    background: var(--gray-700);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pink) 0%, var(--purple) 100%);
+    border-radius: 2px;
+}
+
+/* Links */
+.link {
+    color: var(--pink-light);
+    transition: color 0.15s ease;
+}
+
+.link:hover {
+    color: var(--pink);
+}
+
+/* Divider */
+.divider {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Text utilities */
+.text-gradient {
+    background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Section header gradient */
+.section-header {
+    background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+}
+
+/* Footer dark */
+.footer-dark {
+    background: rgba(15, 23, 42, 0.95);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Navbar gradient */
+.navbar-gradient {
+    background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+}
+
+/* Theme badges */
+.theme-nourriture {
+    background: linear-gradient(135deg, #F97316 0%, #EF4444 100%);
+    color: white;
+}
+
+.theme-Pôle {
+    background: linear-gradient(135deg, var(--cyan) 0%, #3B82F6 100%);
+    color: white;
+}
+
+.theme-autres {
+    background: linear-gradient(135deg, var(--purple) 0%, var(--pink) 100%);
+    color: white;
+}
+
+/* Filter buttons */
+.filter-btn {
+    background: var(--dark-light);
+    border: 1px solid var(--gray-700);
+    color: var(--gray-400);
+}
+
+.filter-btn:hover {
+    border-color: var(--pink);
+    color: var(--pink-light);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+    border-color: transparent;
+    color: white;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gray-700);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-600);
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+    .navbar-gradient .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .card-glass {
+        border-radius: 1rem;
+    }
+}

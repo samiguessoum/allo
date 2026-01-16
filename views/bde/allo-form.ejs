@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= allo ? 'Editer' : 'Créer' %> un ALLO - ALLO Seker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>* { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="min-h-screen">
+    <nav class="navbar py-4">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center">
+                <a href="/live" class="text-gray-400 hover:text-white text-sm transition-colors">Live</a>
+                <a href="/">
+                    <img src="/images/logo.png" alt="ALLO Seker" class="h-16 md:h-20">
+                </a>
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-500 text-sm">(<%= user.firstName %>)</span>
+                    <a href="/auth/logout" class="text-gray-400 hover:text-white text-sm transition-colors">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto px-4 sm:px-6 py-8">
+        <a href="/bde/dashboard" class="inline-flex items-center gap-2 text-gray-400 hover:text-white text-sm mb-6 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Retour au dashboard
+        </a>
+
+        <div class="card-glass rounded-2xl shadow-xl overflow-hidden">
+            <div class="section-header p-6 md:p-8">
+                <h1 class="text-2xl font-bold text-white"><%= allo ? 'Editer' : 'Créer' %> un ALLO</h1>
+                <p class="text-white/70 text-sm mt-1">Remplis les informations ci-dessous</p>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <% if (error) { %>
+                    <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-r-lg mb-6">
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <form action="<%= allo ? '/bde/allo/' + allo.id + '/edit' : '/bde/allo/new' %>" method="POST" class="space-y-5">
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-2">Titre *</label>
+                        <input type="text" id="title" name="title" required
+                               value="<%= allo ? allo.title : '' %>"
+                               placeholder="Ex: Massage 15 min"
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:outline-none transition-colors text-gray-900">
+                    </div>
+
+                    <div>
+                        <label for="theme" class="block text-sm font-medium text-gray-700 mb-2">Theme *</label>
+                        <select id="theme" name="theme" required
+                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:outline-none transition-colors bg-white text-gray-900">
+                            <option value="Allo Nourriture" <%= (allo && allo.theme === 'Allo Nourriture') ? 'selected' : '' %>>Allo Nourriture</option>
+                            <option value="Allo Pôle" <%= (allo && allo.theme === 'Allo Pôle') ? 'selected' : '' %>>Allo Pôle</option>
+                            <option value="Autres Allo" <%= (!allo || allo.theme === 'Autres Allo') ? 'selected' : '' %>>Autres Allo</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                        <textarea id="description" name="description" rows="3"
+                                  placeholder="Decris ton ALLO..."
+                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:outline-none transition-colors text-gray-900"><%= allo ? allo.description || '' : '' %></textarea>
+                    </div>
+
+                    <div>
+                        <label for="conditions" class="block text-sm font-medium text-gray-700 mb-2">Conditions</label>
+                        <textarea id="conditions" name="conditions" rows="2"
+                                  placeholder="Ex: Maximum 1 personne par jour..."
+                                  class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:outline-none transition-colors text-gray-900"><%= allo ? allo.conditions_text || '' : '' %></textarea>
+                    </div>
+
+                    <% if (!allo) { %>
+                        <div>
+                            <label for="nbSlots" class="block text-sm font-medium text-gray-700 mb-2">Nombre de slots *</label>
+                            <input type="number" id="nbSlots" name="nbSlots" required min="1" max="100" value="1"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:outline-none transition-colors text-gray-900">
+                            <p class="text-xs text-gray-500 mt-1">Combien de personnes peuvent shotgun ?</p>
+                        </div>
+                    <% } else { %>
+                        <div class="bg-gray-50 p-4 rounded-xl">
+                            <p class="text-sm text-gray-600">
+                                <strong>Nombre de slots:</strong> <%= allo.nbSlots %>
+                                <span class="text-gray-400">(non modifiable)</span>
+                            </p>
+                        </div>
+                    <% } %>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="opensAt" class="block text-sm font-medium text-gray-700 mb-2">Ouverture</label>
+                            <input type="datetime-local" id="opensAt" name="opensAt"
+                                   value="<%= allo && allo.opens_at ? allo.opens_at.slice(0, 16) : '' %>"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:outline-none transition-colors text-gray-900">
+                            <p class="text-xs text-gray-500 mt-1">Optionnel</p>
+                        </div>
+                        <div>
+                            <label for="closesAt" class="block text-sm font-medium text-gray-700 mb-2">Fermeture</label>
+                            <input type="datetime-local" id="closesAt" name="closesAt"
+                                   value="<%= allo && allo.closes_at ? allo.closes_at.slice(0, 16) : '' %>"
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:outline-none transition-colors text-gray-900">
+                            <p class="text-xs text-gray-500 mt-1">Optionnel</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 pt-4">
+                        <button type="submit"
+                                class="flex-1 btn-shotgun text-white font-semibold py-3 rounded-xl">
+                            <%= allo ? 'Enregistrer' : 'Créer l\'ALLO' %>
+                        </button>
+                        <a href="/bde/dashboard"
+                           class="px-6 py-3 border-2 border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors font-medium flex items-center justify-center">
+                            Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-dark text-gray-400 py-6 mt-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+            <img src="/images/logo.png" alt="ALLO Seker" class="h-10 mx-auto mb-3 opacity-70">
+            <p class="text-sm text-gray-500">Developed by Wendy Technology</p>
+        </div>
+    </footer>
+</body>
+</html>

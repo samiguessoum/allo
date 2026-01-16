@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALLO Seker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>* { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body>
+    <nav class="navbar py-4">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center">
+                <a href="/live" class="text-white font-medium text-sm">Live</a>
+                <a href="/">
+                    <img src="/images/logo.png" alt="ALLO Seker" class="h-16 md:h-20">
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="/mes-allos" class="text-gray-400 hover:text-white text-sm transition-colors">Mes ALLO</a>
+                    <% if (isAuthenticated) { %>
+                        <a href="/bde/dashboard" class="text-gray-400 hover:text-white text-sm transition-colors">Dashboard</a>
+                        <a href="/auth/logout" class="text-gray-400 hover:text-white text-sm transition-colors">Deconnexion</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-white mb-2">ALLO disponibles</h1>
+            <p class="text-gray-400">Reserve ton service en un clic</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <div>
+                <p class="text-xs text-gray-500 mb-2">Filtrer par theme</p>
+                <div class="flex flex-wrap gap-2">
+                    <button class="filter-btn active px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="all">
+                        Tous
+                    </button>
+                    <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="Allo Nourriture">
+                        Nourriture
+                    </button>
+                    <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="Allo Pôle">
+                        Pôle
+                    </button>
+                    <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="Autres Allo">
+                        Autres
+                    </button>
+                </div>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 mb-2">Filtrer par membre</p>
+                <select id="person-filter" class="input px-4 py-2 rounded-lg text-sm">
+                    <option value="all">Tous</option>
+                    <%
+                        const uniquePersons = [...new Set(allos
+                            .filter(a => a.assigned_first_name)
+                            .map(a => a.assigned_first_name + ' ' + a.assigned_last_name)
+                        )];
+                    %>
+                    <% uniquePersons.forEach(person => { %>
+                        <option value="<%= person %>"><%= person %></option>
+                    <% }) %>
+                </select>
+            </div>
+        </div>
+
+        <% if (allos.length === 0) { %>
+            <div class="card rounded-xl p-12 text-center">
+                <p class="text-gray-400 text-lg">Aucun ALLO disponible pour le moment</p>
+                <p class="text-gray-500 text-sm mt-2">Reviens plus tard</p>
+            </div>
+        <% } else { %>
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <% allos.forEach(allo => { %>
+                    <div class="card rounded-xl overflow-hidden allo-card" data-theme="<%= allo.theme || 'Autres Allo' %>" data-person="<%= allo.assigned_first_name ? allo.assigned_first_name + ' ' + allo.assigned_last_name : '' %>">
+                        <div class="p-5">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h2 class="text-lg font-semibold text-white"><%= allo.title %></h2>
+                                    <% if (allo.theme === 'Allo Nourriture') { %>
+                                        <span class="theme-nourriture text-xs px-2 py-0.5 rounded-full font-medium mt-1 inline-block">Nourriture</span>
+                                    <% } else if (allo.theme === 'Allo Pôle') { %>
+                                        <span class="theme-Pôle text-xs px-2 py-0.5 rounded-full font-medium mt-1 inline-block">Pôle</span>
+                                    <% } else { %>
+                                        <span class="theme-autres text-xs px-2 py-0.5 rounded-full font-medium mt-1 inline-block">Autres</span>
+                                    <% } %>
+                                </div>
+                                <% if (allo.timeStatus === 'not_yet') { %>
+                                    <span class="badge badge-warning">Bientot</span>
+                                <% } else if (allo.availableSlots === 0) { %>
+                                    <span class="badge badge-danger">Complet</span>
+                                <% } else { %>
+                                    <span class="badge badge-success"><%= allo.availableSlots %> dispo</span>
+                                <% } %>
+                            </div>
+
+                            <% if (allo.description) { %>
+                                <p class="text-gray-400 text-sm mb-4 line-clamp-2"><%= allo.description %></p>
+                            <% } %>
+
+                            <div class="text-xs text-gray-500 mb-4 space-y-1">
+                                <p><%= allo.bde_list_name %></p>
+                                <% if (allo.assigned_first_name) { %>
+                                    <p class="text-gray-400">Réalisé par <%= allo.assigned_first_name %> <%= allo.assigned_last_name %></p>
+                                <% } %>
+                            </div>
+
+                            <div class="mb-4">
+                                <div class="flex justify-between text-xs text-gray-500 mb-2">
+                                    <span>Reservations</span>
+                                    <span><%= allo.claimed_slots %>/<%= allo.total_slots %></span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: <%= (allo.claimed_slots / allo.total_slots) * 100 %>%"></div>
+                                </div>
+                            </div>
+
+                            <% if (allo.timeStatus === 'not_yet' && allo.opens_at) { %>
+                                <p class="text-xs text-yellow-500 mb-4">
+                                    Ouvre le <%= new Date(allo.opens_at).toLocaleString('fr-FR') %>
+                                </p>
+                            <% } %>
+
+                            <a href="/allo/<%= allo.id %>"
+                               class="block w-full text-center py-2.5 rounded-lg font-medium text-sm transition-all
+                                      <%= allo.availableSlots > 0 && allo.timeStatus === 'open' ? 'btn-primary text-white' : 'btn-secondary text-gray-300' %>">
+                                <% if (allo.availableSlots > 0 && allo.timeStatus === 'open') { %>
+                                    Réserver
+                                <% } else { %>
+                                    Voir
+                                <% } %>
+                            </a>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </main>
+
+    <footer class="border-t border-gray-800 mt-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <img src="/images/logo.png" alt="ALLO Seker" class="h-10 opacity-60">
+                <div class="flex items-center gap-4">
+                    <% if (!isAuthenticated) { %>
+                        <a href="/auth/login" class="text-gray-400 hover:text-white text-sm transition-colors">Espace BDE</a>
+                    <% } %>
+                    <p class="text-gray-500 text-sm">Developed by Wendy Technology</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const personFilter = document.getElementById('person-filter');
+            const alloCards = document.querySelectorAll('.allo-card');
+
+            let currentTheme = 'all';
+            let currentPerson = 'all';
+
+            function applyFilters() {
+                alloCards.forEach(card => {
+                    const matchesTheme = currentTheme === 'all' || card.dataset.theme === currentTheme;
+                    const matchesPerson = currentPerson === 'all' || card.dataset.person === currentPerson;
+
+                    if (matchesTheme && matchesPerson) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    currentTheme = this.dataset.filter;
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    applyFilters();
+                });
+            });
+
+            personFilter.addEventListener('change', function() {
+                currentPerson = this.value;
+                applyFilters();
+            });
+        });
+    </script>
+</body>
+</html>

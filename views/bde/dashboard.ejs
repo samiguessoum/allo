@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard BDE - ALLO Seker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>* { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="min-h-screen">
+    <nav class="navbar py-4">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center">
+                <a href="/live" class="text-gray-400 hover:text-white text-sm transition-colors">Live</a>
+                <a href="/">
+                    <img src="/images/logo.png" alt="ALLO Seker" class="h-16 md:h-20">
+                </a>
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-500 text-sm">(<%= user.firstName %>)</span>
+                    <a href="/auth/logout" class="text-gray-400 hover:text-white text-sm transition-colors">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gradient">Dashboard BDE</h1>
+                <p class="text-gray-400 mt-1">Gère tes ALLO, <%= user.firstName %></p>
+            </div>
+            <a href="/bde/allo/new"
+               class="btn-shotgun text-white px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center gap-2">
+                <span class="text-lg">+</span> Créer un ALLO
+            </a>
+        </div>
+
+        <section class="mb-10">
+            <h2 class="text-lg font-semibold text-white mb-4">Mes ALLO</h2>
+
+            <% if (myAllos.length === 0) { %>
+                <div class="card rounded-2xl shadow-lg p-8 text-center">
+                    <p class="text-gray-400 font-medium">Tu n'as pas encore créé d'ALLO</p>
+                    <a href="/bde/allo/new" class="inline-block mt-4 btn-secondary text-white px-6 py-2 rounded-xl font-medium">
+                        Créer mon premier ALLO
+                    </a>
+                </div>
+            <% } else { %>
+                <div class="card rounded-2xl shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-white/5">
+                                <tr>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Titre</th>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Thème</th>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Statut</th>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Slots</th>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Assigné</th>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-700">
+                                <% myAllos.forEach(allo => { %>
+                                    <tr class="hover:bg-white/5 transition-colors">
+                                        <td class="px-5 py-4">
+                                            <a href="/bde/allo/<%= allo.id %>" class="font-semibold text-pink-400 hover:text-pink-300">
+                                                <%= allo.title %>
+                                            </a>
+                                        </td>
+                                        <td class="px-5 py-4">
+                                            <% if (allo.theme === 'Allo Nourriture') { %>
+                                                <span class="theme-nourriture text-xs px-3 py-1 rounded-full font-medium">Nourriture</span>
+                                            <% } else if (allo.theme === 'Allo Pôle') { %>
+                                                <span class="theme-Pôle text-xs px-3 py-1 rounded-full font-medium">Pôle</span>
+                                            <% } else { %>
+                                                <span class="theme-autres text-xs px-3 py-1 rounded-full font-medium">Autres</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="px-5 py-4">
+                                            <% if (allo.status === 'DRAFT') { %>
+                                                <span class="bg-gray-600 text-gray-200 text-xs px-3 py-1 rounded-full font-medium">Brouillon</span>
+                                            <% } else if (allo.status === 'PUBLISHED') { %>
+                                                <span class="badge-available text-xs px-3 py-1 rounded-full font-medium">Publié</span>
+                                            <% } else { %>
+                                                <span class="badge-full text-xs px-3 py-1 rounded-full font-medium">Fermé</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="px-5 py-4">
+                                            <span class="font-semibold <%= allo.claimed_slots > 0 ? 'text-green-400' : 'text-gray-400' %>">
+                                                <%= allo.claimed_slots %>/<%= allo.total_slots %>
+                                            </span>
+                                        </td>
+                                        <td class="px-5 py-4 text-sm text-gray-400">
+                                            <% if (allo.assigned_first_name) { %>
+                                                <%= allo.assigned_first_name %>
+                                            <% } else { %>
+                                                <span class="text-gray-500">-</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="px-5 py-4">
+                                            <a href="/bde/allo/<%= allo.id %>" class="text-cyan-400 hover:text-cyan-300 font-medium text-sm">Voir</a>
+                                            <% if (allo.status === 'DRAFT') { %>
+                                                <span class="text-gray-600 mx-2">|</span>
+                                                <a href="/bde/allo/<%= allo.id %>/edit" class="text-gray-400 hover:text-gray-300 font-medium text-sm">Éditer</a>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <% } %>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-semibold text-white mb-4">Tous les ALLO de ma liste</h2>
+
+            <% if (allBdeAllos.length === 0) { %>
+                <div class="card rounded-2xl shadow-lg p-8 text-center">
+                    <p class="text-gray-400">Aucun ALLO dans ta liste BDE</p>
+                </div>
+            <% } else { %>
+                <div class="card rounded-2xl shadow-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-white/5">
+                                <tr>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Titre</th>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Thème</th>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Créé par</th>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Statut</th>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Slots</th>
+                                    <th class="px-5 py-4 text-left text-sm font-semibold text-gray-300">Assigné</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-700">
+                                <% allBdeAllos.forEach(allo => { %>
+                                    <tr class="hover:bg-white/5 transition-colors">
+                                        <td class="px-5 py-4">
+                                            <a href="/bde/allo/<%= allo.id %>" class="font-semibold text-purple-400 hover:text-purple-300">
+                                                <%= allo.title %>
+                                            </a>
+                                        </td>
+                                        <td class="px-5 py-4">
+                                            <% if (allo.theme === 'Allo Nourriture') { %>
+                                                <span class="theme-nourriture text-xs px-3 py-1 rounded-full font-medium">Nourriture</span>
+                                            <% } else if (allo.theme === 'Allo Pôle') { %>
+                                                <span class="theme-Pôle text-xs px-3 py-1 rounded-full font-medium">Pôle</span>
+                                            <% } else { %>
+                                                <span class="theme-autres text-xs px-3 py-1 rounded-full font-medium">Autres</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="px-5 py-4 text-sm text-gray-400">
+                                            <%= allo.creator_first_name %> <%= allo.creator_last_name %>
+                                        </td>
+                                        <td class="px-5 py-4">
+                                            <% if (allo.status === 'DRAFT') { %>
+                                                <span class="bg-gray-600 text-gray-200 text-xs px-3 py-1 rounded-full font-medium">Brouillon</span>
+                                            <% } else if (allo.status === 'PUBLISHED') { %>
+                                                <span class="badge-available text-xs px-3 py-1 rounded-full font-medium">Publié</span>
+                                            <% } else { %>
+                                                <span class="badge-full text-xs px-3 py-1 rounded-full font-medium">Fermé</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="px-5 py-4">
+                                            <span class="font-semibold <%= allo.claimed_slots > 0 ? 'text-green-400' : 'text-gray-400' %>">
+                                                <%= allo.claimed_slots %>/<%= allo.total_slots %>
+                                            </span>
+                                        </td>
+                                        <td class="px-5 py-4 text-sm text-gray-400">
+                                            <% if (allo.assigned_first_name) { %>
+                                                <%= allo.assigned_first_name %>
+                                            <% } else { %>
+                                                <span class="text-gray-500">Non assigné</span>
+                                            <% } %>
+                                        </td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            <% } %>
+        </section>
+    </main>
+
+    <footer class="footer-dark text-gray-400 py-6 mt-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+            <img src="/images/logo.png" alt="ALLO Seker" class="h-10 mx-auto mb-3 opacity-70">
+            <p class="text-sm text-gray-500">Developed byWendyTechnology</p>
+        </div>
+    </footer>
+</body>
+</html>

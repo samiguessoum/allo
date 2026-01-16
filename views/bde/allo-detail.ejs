@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= allo.title %> - Dashboard BDE - ALLO Seker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>* { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="min-h-screen">
+    <nav class="navbar py-4">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center">
+                <a href="/live" class="text-gray-400 hover:text-white text-sm transition-colors">Live</a>
+                <a href="/">
+                    <img src="/images/logo.png" alt="ALLO Seker" class="h-16 md:h-20">
+                </a>
+                <div class="flex items-center gap-4">
+                    <span class="text-gray-500 text-sm">(<%= user.firstName %>)</span>
+                    <a href="/auth/logout" class="text-gray-400 hover:text-white text-sm transition-colors">Déconnexion</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+        <a href="/bde/dashboard" class="inline-flex items-center gap-2 text-gray-400 hover:text-white text-sm mb-6 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            Retour au dashboard
+        </a>
+
+        <div class="card-glass rounded-2xl shadow-xl overflow-hidden mb-6">
+            <div class="section-header p-6 md:p-8">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-white"><%= allo.title %></h1>
+                        <p class="text-white/70 mt-1">
+                            Créé par <%= allo.creator_first_name %> <%= allo.creator_last_name %>
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <% if (allo.theme === 'Allo Nourriture') { %>
+                            <span class="theme-nourriture text-xs px-3 py-1 rounded-full font-medium">Nourriture</span>
+                        <% } else if (allo.theme === 'Allo Pôle') { %>
+                            <span class="theme-Pôle text-xs px-3 py-1 rounded-full font-medium">Pôle</span>
+                        <% } else { %>
+                            <span class="theme-autres text-xs px-3 py-1 rounded-full font-medium">Autres</span>
+                        <% } %>
+                        <% if (allo.status === 'DRAFT') { %>
+                            <span class="bg-white/20 text-white px-4 py-2 rounded-full font-medium text-sm">Brouillon</span>
+                        <% } else if (allo.status === 'PUBLISHED') { %>
+                            <span class="bg-green-400/80 text-white px-4 py-2 rounded-full font-medium text-sm">Publie</span>
+                        <% } else { %>
+                            <span class="bg-red-400/80 text-white px-4 py-2 rounded-full font-medium text-sm">Fermé</span>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <% if (allo.description) { %>
+                    <div class="mb-4">
+                        <h2 class="font-semibold text-gray-800 mb-2">Description</h2>
+                        <p class="text-gray-600 bg-gray-50 p-4 rounded-xl"><%= allo.description %></p>
+                    </div>
+                <% } %>
+
+                <% if (allo.conditions_text) { %>
+                    <div class="mb-4 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl">
+                        <h2 class="font-semibold text-amber-800 mb-1">Conditions</h2>
+                        <p class="text-amber-700"><%= allo.conditions_text %></p>
+                    </div>
+                <% } %>
+
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gradient-to-r from-pink-50 to-purple-50 p-4 rounded-xl">
+                        <span class="text-gray-500 text-sm">Ouverture</span>
+                        <p class="font-semibold text-gray-800">
+                            <%= allo.opens_at ? new Date(allo.opens_at).toLocaleString('fr-FR') : 'Immediat' %>
+                        </p>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-50 to-cyan-50 p-4 rounded-xl">
+                        <span class="text-gray-500 text-sm">Fermeture</span>
+                        <p class="font-semibold text-gray-800">
+                            <%= allo.closes_at ? new Date(allo.closes_at).toLocaleString('fr-FR') : 'Pas de limite' %>
+                        </p>
+                    </div>
+                </div>
+
+                <% if (isOwner) { %>
+                    <div class="flex flex-wrap gap-3 border-t-2 border-dashed border-gray-200 pt-6">
+                        <% if (allo.status === 'DRAFT') { %>
+                            <form action="/bde/allo/<%= allo.id %>/publish" method="POST" class="inline">
+                                <button type="submit" class="bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 text-white px-5 py-2 rounded-xl font-medium shadow-lg transition-all">
+                                    Publier
+                                </button>
+                            </form>
+                            <a href="/bde/allo/<%= allo.id %>/edit" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-2 rounded-xl font-medium transition-all">
+                                Editer
+                            </a>
+                        <% } else if (allo.status === 'PUBLISHED') { %>
+                            <form action="/bde/allo/<%= allo.id %>/close" method="POST" class="inline">
+                                <button type="submit" class="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white px-5 py-2 rounded-xl font-medium shadow-lg transition-all">
+                                    Fermer
+                                </button>
+                            </form>
+                        <% } else { %>
+                            <form action="/bde/allo/<%= allo.id %>/reopen" method="POST" class="inline">
+                                <button type="submit" class="bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 text-white px-5 py-2 rounded-xl font-medium shadow-lg transition-all">
+                                    Réouvrir
+                                </button>
+                            </form>
+                        <% } %>
+
+                        <form action="/bde/allo/<%= allo.id %>/delete" method="POST" class="inline ml-auto"
+                              onsubmit="return confirm('Es-tu sur de vouloir supprimer cet ALLO ?')">
+                            <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 px-5 py-2 rounded-xl font-medium transition-all">
+                                Supprimer
+                            </button>
+                        </form>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="card-glass rounded-2xl shadow-lg overflow-hidden mb-6">
+            <div class="p-6">
+                <h2 class="font-semibold text-gray-800 mb-4">Assignation "Réalisé par"</h2>
+
+                <div class="flex flex-col md:flex-row items-start md:items-center gap-4">
+                    <div class="flex-1">
+                        <p class="text-gray-600">
+                            <strong>Actuellement:</strong>
+                            <% if (allo.assigned_first_name) { %>
+                                <span class="text-pink-600 font-semibold"><%= allo.assigned_first_name %> <%= allo.assigned_last_name %></span>
+                            <% } else { %>
+                                <span class="text-gray-400">Personne</span>
+                            <% } %>
+                        </p>
+                    </div>
+
+                    <form action="/bde/allo/<%= allo.id %>/assign" method="POST" class="flex items-center gap-2">
+                        <select name="assignedTo" class="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:outline-none transition-colors bg-white text-gray-900">
+                            <option value="">-- Non assigne --</option>
+                            <% bdeMembers.forEach(member => { %>
+                                <option value="<%= member.id %>" <%= allo.assigned_to === member.id ? 'selected' : '' %>>
+                                    <%= member.first_name %> <%= member.last_name %>
+                                </option>
+                            <% }) %>
+                        </select>
+                        <button type="submit" class="btn-secondary text-white px-5 py-2 rounded-xl font-medium">
+                            Assigner
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-glass rounded-2xl shadow-lg overflow-hidden">
+            <div class="p-6">
+                <h2 class="font-semibold text-gray-800 mb-4 flex items-center justify-between">
+                    Reservations
+                    <span class="bg-gradient-to-r from-pink-500 to-purple-500 text-white text-sm px-3 py-1 rounded-full">
+                        <%= slots.filter(s => s.claimed_by_phone).length %>/<%= slots.length %>
+                    </span>
+                </h2>
+
+                <% const claimedSlots = slots.filter(s => s.claimed_by_phone); %>
+                <% if (claimedSlots.length === 0) { %>
+                    <div class="text-center py-8">
+                        <p class="text-gray-500">Aucune reservation pour le moment</p>
+                    </div>
+                <% } else { %>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gradient-to-r from-pink-500/10 to-purple-500/10">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">#</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Nom</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Telephone</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Date</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <% let slotNum = 0; %>
+                                <% slots.forEach((slot, index) => { %>
+                                    <% if (slot.claimed_by_phone) { %>
+                                        <% slotNum++; %>
+                                        <tr class="hover:bg-pink-50/50 transition-colors">
+                                            <td class="px-4 py-3">
+                                                <span class="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white flex items-center justify-center text-sm font-bold">
+                                                    <%= slotNum %>
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3 font-semibold text-gray-800"><%= slot.claimed_by_name %></td>
+                                            <td class="px-4 py-3">
+                                                <a href="tel:<%= slot.claimed_by_phone %>" class="text-cyan-600 hover:text-cyan-700 font-medium">
+                                                    <%= slot.claimed_by_phone %>
+                                                </a>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-500">
+                                                <%= new Date(slot.claimed_at).toLocaleString('fr-FR') %>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <form action="/bde/slot/<%= slot.id %>/complete" method="POST" class="inline"
+                                                      onsubmit="return confirm('Marquer comme fait ? L\\'etudiant pourra a nouveau shotgun un autre ALLO.')">
+                                                    <button type="submit" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                                        Fait
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } %>
+
+                <% const availableSlots = slots.filter(s => !s.claimed_by_phone); %>
+                <% if (availableSlots.length > 0) { %>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <p class="text-sm text-gray-500 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-green-500 to-cyan-500"></span>
+                            <span class="font-semibold text-green-600"><%= availableSlots.length %></span> slot(s) encore disponible(s)
+                        </p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-dark text-gray-400 py-6 mt-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+            <img src="/images/logo.png" alt="ALLO Seker" class="h-10 mx-auto mb-3 opacity-70">
+            <p class="text-sm text-gray-500">Developed by Wendy Technology</p>
+        </div>
+    </footer>
+</body>
+</html>
