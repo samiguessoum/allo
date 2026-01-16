@@ -3,6 +3,41 @@ const bcrypt = require('bcrypt');
 const db = require('../db/db');
 
 const router = express.Router();
+const gatePassword = process.env.BDE_GATE_PASSWORD || 'Meglau29alger16#';
+
+function requireBdeGate(req, res, next) {
+    if (req.session.bdeGate) {
+        return next();
+    }
+
+    if (req.path === '/gate') {
+        return next();
+    }
+
+    return res.redirect('/auth/gate');
+}
+
+router.use(requireBdeGate);
+
+// Page de mot de passe BDE
+router.get('/gate', (req, res) => {
+    if (req.session.bdeGate) {
+        return res.redirect('/auth/login');
+    }
+    res.render('auth/gate', { error: null });
+});
+
+// Verification du mot de passe BDE
+router.post('/gate', (req, res) => {
+    const { password } = req.body;
+
+    if (password === gatePassword) {
+        req.session.bdeGate = true;
+        return res.redirect('/auth/login');
+    }
+
+    res.render('auth/gate', { error: 'Mot de passe incorrect' });
+});
 
 // Page de connexion
 router.get('/login', (req, res) => {
