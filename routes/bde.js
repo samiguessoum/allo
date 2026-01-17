@@ -226,7 +226,7 @@ router.post('/allo/:id/publish', (req, res) => {
         UPDATE allos SET status = 'PUBLISHED', published_at = datetime('now') WHERE id = ?
     `).run(alloId);
 
-    res.redirect(`/bde/allo/${alloId}`);
+    res.redirect('/bde/dashboard');
 });
 
 // Fermer un ALLO
