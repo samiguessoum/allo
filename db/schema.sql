@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS allo_slots (
     claimed_by_name TEXT,
     claimed_by_phone TEXT,
     claimed_by_address TEXT,
+    claimed_completed INTEGER DEFAULT 0,
     claimed_at DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

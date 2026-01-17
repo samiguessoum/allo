@@ -29,11 +29,18 @@ function runMigrations() {
     if (slotsTableExists) {
         const slotsInfo = db.prepare("PRAGMA table_info(allo_slots)").all();
         const hasAddressColumn = slotsInfo.some(col => col.name === 'claimed_by_address');
+        const hasCompletedColumn = slotsInfo.some(col => col.name === 'claimed_completed');
 
         if (!hasAddressColumn) {
             console.log('Migration: ajout de la colonne claimed_by_address...');
             db.exec("ALTER TABLE allo_slots ADD COLUMN claimed_by_address TEXT");
             console.log('Migration: colonne claimed_by_address ajoutee');
+        }
+
+        if (!hasCompletedColumn) {
+            console.log('Migration: ajout de la colonne claimed_completed...');
+            db.exec("ALTER TABLE allo_slots ADD COLUMN claimed_completed INTEGER DEFAULT 0");
+            console.log('Migration: colonne claimed_completed ajoutee');
         }
     }
 }

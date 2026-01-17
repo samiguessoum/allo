@@ -186,6 +186,11 @@
                         <p class="text-gray-500">Aucune reservation pour le moment</p>
                     </div>
                 <% } else { %>
+                    <div class="mb-4">
+                        <label for="address-search" class="block text-sm font-medium text-gray-600 mb-2">Recherche par adresse</label>
+                        <input type="text" id="address-search" placeholder="Ex: I12-203"
+                               class="w-full max-w-sm px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-pink-400">
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead class="bg-gradient-to-r from-pink-500/10 to-purple-500/10">
@@ -198,12 +203,12 @@
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100">
+                            <tbody class="divide-y divide-gray-100" id="participants-body">
                                 <% let slotNum = 0; %>
                                 <% slots.forEach((slot, index) => { %>
                                     <% if (slot.claimed_by_phone) { %>
                                         <% slotNum++; %>
-                                        <tr class="hover:bg-pink-50/50 transition-colors">
+                                        <tr class="hover:bg-pink-50/50 transition-colors <%= slot.claimed_completed ? 'bg-red-50/70' : '' %>" data-address="<%= slot.claimed_by_address || '' %>">
                                             <td class="px-4 py-3">
                                                 <span class="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white flex items-center justify-center text-sm font-bold">
                                                     <%= slotNum %>
@@ -224,7 +229,7 @@
                                             <td class="px-4 py-3">
                                                 <form action="/bde/slot/<%= slot.id %>/complete" method="POST" class="inline"
                                                       onsubmit="return confirm('Marquer comme fait ? L\\'etudiant pourra a nouveau shotgun un autre Allo's.')">
-                                                    <button type="submit" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                                    <button type="submit" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-lg text-xs font-medium transition-all" <%= slot.claimed_completed ? 'disabled' : '' %>>
                                                         Fait
                                                     </button>
                                                 </form>
@@ -256,5 +261,19 @@
             <p class="text-sm text-gray-500">Developed by Wendy Technology</p>
         </div>
     </footer>
+
+    <script>
+        const searchInput = document.getElementById('address-search');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                const rows = document.querySelectorAll('#participants-body tr');
+                rows.forEach(row => {
+                    const address = (row.dataset.address || '').toLowerCase();
+                    row.style.display = !query || address.includes(query) ? '' : 'none';
+                });
+            });
+        }
+    </script>
 </body>
 </html>

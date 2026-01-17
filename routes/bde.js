@@ -331,10 +331,10 @@ router.post('/slot/:slotId/complete', (req, res) => {
         return res.status(403).send('Acces non autorise');
     }
 
-    // Liberer le slot (effacer les infos de reservation)
+    // Marquer comme fait sans liberer le slot
     db.prepare(`
         UPDATE allo_slots
-        SET claimed_by_name = NULL, claimed_by_phone = NULL, claimed_by_address = NULL, claimed_at = NULL
+        SET claimed_completed = 1
         WHERE id = ?
     `).run(slotId);
 
