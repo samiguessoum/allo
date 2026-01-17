@@ -116,6 +116,9 @@
                                     Fermer
                                 </button>
                             </form>
+                            <a href="/bde/allo/<%= allo.id %>/edit" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-2 rounded-xl font-medium transition-all">
+                                Editer
+                            </a>
                         <% } else { %>
                             <form action="/bde/allo/<%= allo.id %>/reopen" method="POST" class="inline">
                                 <button type="submit" class="bg-gradient-to-r from-green-500 to-cyan-500 hover:from-green-600 hover:to-cyan-600 text-white px-5 py-2 rounded-xl font-medium shadow-lg transition-all">
