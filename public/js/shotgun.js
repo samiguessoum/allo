@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
         const phone = document.getElementById('phone').value.trim();
+        const address = document.getElementById('address').value.trim();
         const slotId = slotIdInput.value;
 
         try {
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ firstName, lastName, phone })
+                body: JSON.stringify({ firstName, lastName, phone, address })
             });
 
             const data = await response.json();

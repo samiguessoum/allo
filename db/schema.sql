@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS allo_slots (
     allo_id INTEGER NOT NULL REFERENCES allos(id) ON DELETE CASCADE,
     claimed_by_name TEXT,
     claimed_by_phone TEXT,
+    claimed_by_address TEXT,
     claimed_at DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

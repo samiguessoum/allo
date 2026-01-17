@@ -115,18 +115,19 @@ router.get('/allo/:id', (req, res) => {
 // SHOTGUN - Réserver un slot (POST avec JSON)
 router.post('/shotgun/:slotId', express.json(), (req, res) => {
     const slotId = req.params.slotId;
-    const { firstName, lastName, phone } = req.body;
+    const { firstName, lastName, phone, address } = req.body;
 
     // Validations
-    if (!firstName || !lastName || !phone) {
+    if (!firstName || !lastName || !phone || !address) {
         return res.status(400).json({
             success: false,
-            message: 'Tous les champs sont obligatoires (prenom, nom, telephone)'
+            message: 'Tous les champs sont obligatoires (prenom, nom, telephone, adresse)'
         });
     }
 
     // Nettoyer le numero de telephone
     const cleanPhone = phone.replace(/\s/g, '');
+    const cleanAddress = address.trim();
 
     // Verifier que le slot existe et appartient a un ALLO publie
     const slot = db.prepare(`
@@ -198,9 +199,9 @@ router.post('/shotgun/:slotId', express.json(), (req, res) => {
 
     const result = db.prepare(`
         UPDATE allo_slots
-        SET claimed_by_name = ?, claimed_by_phone = ?, claimed_at = datetime('now')
+        SET claimed_by_name = ?, claimed_by_phone = ?, claimed_by_address = ?, claimed_at = datetime('now')
         WHERE id = ? AND claimed_by_phone IS NULL
-    `).run(fullName, cleanPhone, slotId);
+    `).run(fullName, cleanPhone, cleanAddress, slotId);
 
     if (result.changes === 1) {
         // Succes ! Enregistrer/mettre a jour l'etudiant

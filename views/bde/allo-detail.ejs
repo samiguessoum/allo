@@ -190,6 +190,7 @@
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">#</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Nom</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Telephone</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Adresse</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Date</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
                                 </tr>
@@ -210,6 +211,9 @@
                                                 <a href="tel:<%= slot.claimed_by_phone %>" class="text-cyan-600 hover:text-cyan-700 font-medium">
                                                     <%= slot.claimed_by_phone %>
                                                 </a>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-600">
+                                                <%= slot.claimed_by_address || '-' %>
                                             </td>
                                             <td class="px-4 py-3 text-sm text-gray-500">
                                                 <%= new Date(slot.claimed_at).toLocaleString('fr-FR') %>

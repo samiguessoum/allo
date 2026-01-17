@@ -24,6 +24,18 @@ function runMigrations() {
             console.log('Migration: colonne theme ajoutee');
         }
     }
+
+    const slotsTableExists = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='allo_slots'").get();
+    if (slotsTableExists) {
+        const slotsInfo = db.prepare("PRAGMA table_info(allo_slots)").all();
+        const hasAddressColumn = slotsInfo.some(col => col.name === 'claimed_by_address');
+
+        if (!hasAddressColumn) {
+            console.log('Migration: ajout de la colonne claimed_by_address...');
+            db.exec("ALTER TABLE allo_slots ADD COLUMN claimed_by_address TEXT");
+            console.log('Migration: colonne claimed_by_address ajoutee');
+        }
+    }
 }
 
 // Initialiser la base de donnees avec le schema

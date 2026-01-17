@@ -334,7 +334,7 @@ router.post('/slot/:slotId/complete', (req, res) => {
     // Liberer le slot (effacer les infos de reservation)
     db.prepare(`
         UPDATE allo_slots
-        SET claimed_by_name = NULL, claimed_by_phone = NULL, claimed_at = NULL
+        SET claimed_by_name = NULL, claimed_by_phone = NULL, claimed_by_address = NULL, claimed_at = NULL
         WHERE id = ?
     `).run(slotId);
 
