@@ -11,7 +11,8 @@
     <meta property="og:image" content="/images/logo.png" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
-    <link rel="icon" type="image/png" href="/images/logo.png" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/images/logo.png" />
     <title><%= allo.title %> - ALLO Seker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/style.css">
@@ -60,7 +61,7 @@
                     <% if (availableSlots.length > 0 && timeStatus === 'open') { %>
                         <span class="badge badge-success"><%= availableSlots.length %> dispo</span>
                     <% } else if (timeStatus === 'not_yet') { %>
-                        <span class="badge badge-warning">Bientot</span>
+                        <span class="badge badge-warning">Bientôt</span>
                     <% } else { %>
                         <span class="badge badge-danger">Complet</span>
                     <% } %>
