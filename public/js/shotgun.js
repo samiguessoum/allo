@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 messageDiv.classList.add('bg-green-100', 'text-green-800');
                 messageDiv.innerHTML = `
                     <p class="font-bold text-lg">${data.message}</p>
-                    <p class="mt-2">Tu peux retrouver ta réservation dans <a href="/mes-allos" class="underline">Mes ALLO</a>.</p>
+                    <p class="mt-2">Tu peux retrouver ta réservation dans <a href="/mes-allos" class="underline">Mes Allo's</a>.</p>
                 `;
 
                 // Masquer le formulaire

@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="6UhcIl_FY6btNpMlR20k54CX018T0cjAm0dZsPJoDJA" />
-    <meta name="description" content="Plateforme de shotgun pour les ALLO de Seker Story a l IMT Atlantique Brest. Reserve des services limites publies par la liste BDE." />
+    <meta name="description" content="Plateforme de shotgun pour les Allo's de Seker Story a l IMT Atlantique Brest. Reserve des services limites publies par la liste BDE." />
     <meta name="keywords" content="ALLO, BDE, Seker Story, IMT Atlantique, Brest, shotgun, services, etudiants" />
     <meta property="og:title" content="ALLO Seker - Shotgun BDE IMT Atlantique Brest" />
-    <meta property="og:description" content="Plateforme de shotgun pour les ALLO de Seker Story a l IMT Atlantique Brest. Reserve des services limites publies par la liste BDE." />
+    <meta property="og:description" content="Plateforme de shotgun pour les Allo's de Seker Story a l IMT Atlantique Brest. Reserve des services limites publies par la liste BDE." />
     <meta property="og:image" content="/images/logo.png" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
@@ -38,22 +38,22 @@
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
                 <h1 class="text-3xl font-bold text-gradient">Dashboard BDE</h1>
-                <p class="text-gray-400 mt-1">Gère tes ALLO, <%= user.firstName %></p>
+                <p class="text-gray-400 mt-1">Gère tes Allo's, <%= user.firstName %></p>
             </div>
             <a href="/bde/allo/new"
                class="btn-shotgun text-white px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center gap-2">
-                <span class="text-lg">+</span> Créer un ALLO
+                <span class="text-lg">+</span> Créer un Allo's
             </a>
         </div>
 
         <section class="mb-10">
-            <h2 class="text-lg font-semibold text-white mb-4">Mes ALLO</h2>
+            <h2 class="text-lg font-semibold text-white mb-4">Mes Allo's</h2>
 
             <% if (myAllos.length === 0) { %>
                 <div class="card rounded-2xl shadow-lg p-8 text-center">
-                    <p class="text-gray-400 font-medium">Tu n'as pas encore créé d'ALLO</p>
+                    <p class="text-gray-400 font-medium">Tu n'as pas encore créé d'Allo's</p>
                     <a href="/bde/allo/new" class="inline-block mt-4 btn-secondary text-white px-6 py-2 rounded-xl font-medium">
-                        Créer mon premier ALLO
+                        Créer mon premier Allo's
                     </a>
                 </div>
             <% } else { %>
@@ -125,11 +125,11 @@
         </section>
 
         <section>
-            <h2 class="text-lg font-semibold text-white mb-4">Tous les ALLO de ma liste</h2>
+            <h2 class="text-lg font-semibold text-white mb-4">Tous les Allo's de ma liste</h2>
 
             <% if (allBdeAllos.length === 0) { %>
                 <div class="card rounded-2xl shadow-lg p-8 text-center">
-                    <p class="text-gray-400">Aucun ALLO dans ta liste BDE</p>
+                    <p class="text-gray-400">Aucun Allo's dans ta liste BDE</p>
                 </div>
             <% } else { %>
                 <div class="card rounded-2xl shadow-lg overflow-hidden">

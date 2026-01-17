@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="6UhcIl_FY6btNpMlR20k54CX018T0cjAm0dZsPJoDJA" />
-    <meta name="description" content="Plateforme de shotgun pour les ALLO de Seker Story a l IMT Atlantique Brest. Reserve des services limites publies par la liste BDE." />
+    <meta name="description" content="Plateforme de shotgun pour les Allo's de Seker Story a l IMT Atlantique Brest. Reserve des services limites publies par la liste BDE." />
     <meta name="keywords" content="ALLO, BDE, Seker Story, IMT Atlantique, Brest, shotgun, services, etudiants" />
     <meta property="og:title" content="ALLO Seker - Shotgun BDE IMT Atlantique Brest" />
-    <meta property="og:description" content="Plateforme de shotgun pour les ALLO de Seker Story a l IMT Atlantique Brest. Reserve des services limites publies par la liste BDE." />
+    <meta property="og:description" content="Plateforme de shotgun pour les Allo's de Seker Story a l IMT Atlantique Brest. Reserve des services limites publies par la liste BDE." />
     <meta property="og:image" content="/images/logo.png" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
@@ -27,7 +27,7 @@
                     <img src="/images/logo.png" alt="ALLO Seker" class="h-16 md:h-20">
                 </a>
                 <div class="flex items-center gap-4">
-                    <a href="/mes-allos" class="text-gray-400 hover:text-white text-sm transition-colors">Mes ALLO</a>
+                    <a href="/mes-allos" class="text-gray-400 hover:text-white text-sm transition-colors">Mes Allo's</a>
                     <% if (isAuthenticated) { %>
                         <a href="/bde/dashboard" class="text-gray-400 hover:text-white text-sm transition-colors">Dashboard</a>
                         <a href="/auth/logout" class="text-gray-400 hover:text-white text-sm transition-colors">Deconnexion</a>
@@ -99,7 +99,7 @@
                     </div>
                 <% } else if (timeStatus === 'closed') { %>
                     <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-center">
-                        <p class="text-red-500 font-medium">ALLO Fermé</p>
+                        <p class="text-red-500 font-medium">Allo's Fermé</p>
                     </div>
                 <% } %>
 
@@ -155,7 +155,7 @@
                     <div class="divider pt-6 text-center">
                         <p class="text-red-400 font-medium">Tous les slots sont pris</p>
                         <a href="/live" class="inline-block mt-4 btn-secondary text-gray-300 px-6 py-2 rounded-lg text-sm">
-                            Voir les autres ALLO
+                            Voir les autres Allo's
                         </a>
                     </div>
                 <% } %>
