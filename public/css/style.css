@@ -276,6 +276,16 @@ select.input {
     color: white;
 }
 
+.theme-transport {
+    background: linear-gradient(135deg, #10B981 0%, #22D3EE 100%);
+    color: white;
+}
+
+.theme-fun {
+    background: linear-gradient(135deg, #F59E0B 0%, #EC4899 100%);
+    color: white;
+}
+
 /* Filter buttons */
 .filter-btn {
     background: var(--dark-light);
