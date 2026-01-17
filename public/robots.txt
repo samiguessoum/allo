@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /bde/
+Disallow: /auth/
+Sitemap: https://alloseker.wendytechnology.fr/sitemap.xml
