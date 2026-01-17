@@ -74,7 +74,7 @@ router.post('/allo/new', (req, res) => {
     }
 
     // Valider le theme
-    const validThemes = ['Allo Nourriture', 'Allo Pôle', 'Autres Allo'];
+    const validThemes = ['Allo Nourriture', 'Allo Pôle', 'Allo Transport', 'Allo Fun', 'Autres Allo'];
     const selectedTheme = validThemes.includes(theme) ? theme : 'Autres Allo';
 
     try {
@@ -149,7 +149,7 @@ router.post('/allo/:id/edit', (req, res) => {
     }
 
     // Valider le theme
-    const validThemes = ['Allo Nourriture', 'Allo Pôle', 'Autres Allo'];
+    const validThemes = ['Allo Nourriture', 'Allo Pôle', 'Allo Transport', 'Allo Fun', 'Autres Allo'];
     const selectedTheme = validThemes.includes(theme) ? theme : 'Autres Allo';
 
     try {
