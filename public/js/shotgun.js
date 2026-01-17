@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const btn = document.getElementById('shotgun-btn');
     const messageDiv = document.getElementById('shotgun-message');
-    const slotIdInput = document.getElementById('slot-id');
+    const alloIdInput = document.getElementById('allo-id');
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
@@ -19,10 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const lastName = document.getElementById('lastName').value.trim();
         const phone = document.getElementById('phone').value.trim();
         const address = document.getElementById('address').value.trim();
-        const slotId = slotIdInput.value;
+        const alloId = alloIdInput.value;
 
         try {
-            const response = await fetch(`/shotgun/${slotId}`, {
+            const response = await fetch(`/shotgun/allo/${alloId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

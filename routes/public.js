@@ -113,8 +113,8 @@ router.get('/allo/:id', (req, res) => {
 });
 
 // SHOTGUN - Réserver un slot (POST avec JSON)
-router.post('/shotgun/:slotId', express.json(), (req, res) => {
-    const slotId = req.params.slotId;
+router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
+    const alloId = req.params.alloId;
     const { firstName, lastName, phone, address } = req.body;
 
     // Validations
@@ -129,22 +129,21 @@ router.post('/shotgun/:slotId', express.json(), (req, res) => {
     const cleanPhone = phone.replace(/\s/g, '');
     const cleanAddress = address.trim();
 
-    // Verifier que le slot existe et appartient a un ALLO publie
-    const slot = db.prepare(`
-        SELECT s.*, a.status, a.opens_at, a.closes_at, a.id as allo_id
-        FROM allo_slots s
-        JOIN allos a ON s.allo_id = a.id
-        WHERE s.id = ?
-    `).get(slotId);
+    // Verifier que l'ALLO existe et est publie
+    const allo = db.prepare(`
+        SELECT id, status, opens_at, closes_at
+        FROM allos
+        WHERE id = ?
+    `).get(alloId);
 
-    if (!slot) {
+    if (!allo) {
         return res.status(404).json({
             success: false,
-            message: 'Slot non trouve'
+            message: 'Allo\'s non trouve'
         });
     }
 
-    if (slot.status !== 'PUBLISHED') {
+    if (allo.status !== 'PUBLISHED') {
         return res.status(400).json({
             success: false,
             message: 'Cet ALLO n\'est plus disponible'
@@ -153,14 +152,14 @@ router.post('/shotgun/:slotId', express.json(), (req, res) => {
 
     // Verifier la fenetre temporelle
     const now = new Date();
-    if (slot.opens_at && new Date(slot.opens_at) > now) {
+    if (allo.opens_at && new Date(allo.opens_at) > now) {
         return res.status(400).json({
             success: false,
             message: 'Cet ALLO n\'est pas encore ouvert'
         });
     }
 
-    if (slot.closes_at && new Date(slot.closes_at) < now) {
+    if (allo.closes_at && new Date(allo.closes_at) < now) {
         return res.status(400).json({
             success: false,
             message: 'Cet ALLO est Fermé'
@@ -170,7 +169,7 @@ router.post('/shotgun/:slotId', express.json(), (req, res) => {
     // Verifier si l'utilisateur a deja un slot sur cet ALLO
     const existingClaim = db.prepare(`
         SELECT id FROM allo_slots WHERE allo_id = ? AND claimed_by_phone = ?
-    `).get(slot.allo_id, cleanPhone);
+    `).get(alloId, cleanPhone);
 
     if (existingClaim) {
         return res.status(400).json({
@@ -200,8 +199,13 @@ router.post('/shotgun/:slotId', express.json(), (req, res) => {
     const result = db.prepare(`
         UPDATE allo_slots
         SET claimed_by_name = ?, claimed_by_phone = ?, claimed_by_address = ?, claimed_at = datetime('now')
-        WHERE id = ? AND claimed_by_phone IS NULL
-    `).run(fullName, cleanPhone, cleanAddress, slotId);
+        WHERE id = (
+            SELECT id FROM allo_slots
+            WHERE allo_id = ? AND claimed_by_phone IS NULL
+            ORDER BY id
+            LIMIT 1
+        ) AND claimed_by_phone IS NULL
+    `).run(fullName, cleanPhone, cleanAddress, alloId);
 
     if (result.changes === 1) {
         // Succes ! Enregistrer/mettre a jour l'etudiant
