@@ -115,19 +115,21 @@ router.get('/allo/:id', (req, res) => {
 // SHOTGUN - Réserver un slot (POST avec JSON)
 router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
     const alloId = req.params.alloId;
-    const { firstName, lastName, phone, address } = req.body;
+    const { firstName, lastName, phone, building, room } = req.body;
 
     // Validations
-    if (!firstName || !lastName || !phone || !address) {
+    if (!firstName || !lastName || !phone || !building || !room) {
         return res.status(400).json({
             success: false,
-            message: 'Tous les champs sont obligatoires (prenom, nom, telephone, adresse)'
+            message: 'Tous les champs sont obligatoires (prenom, nom, telephone, batiment, numero)'
         });
     }
 
     // Nettoyer le numero de telephone
     const cleanPhone = phone.replace(/\s/g, '');
-    const cleanAddress = address.trim();
+    const cleanBuilding = building.trim();
+    const cleanRoom = room.trim();
+    const combinedAddress = `${cleanBuilding} ${cleanRoom}`.trim();
 
     // Verifier que l'ALLO existe et est publie
     const allo = db.prepare(`
@@ -198,14 +200,14 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
 
     const result = db.prepare(`
         UPDATE allo_slots
-        SET claimed_by_name = ?, claimed_by_phone = ?, claimed_by_address = ?, claimed_at = datetime('now')
+        SET claimed_by_name = ?, claimed_by_phone = ?, claimed_by_address = ?, claimed_by_building = ?, claimed_by_room = ?, claimed_at = datetime('now')
         WHERE id = (
             SELECT id FROM allo_slots
             WHERE allo_id = ? AND claimed_by_phone IS NULL
             ORDER BY id
             LIMIT 1
         ) AND claimed_by_phone IS NULL
-    `).run(fullName, cleanPhone, cleanAddress, alloId);
+    `).run(fullName, cleanPhone, combinedAddress, cleanBuilding, cleanRoom, alloId);
 
     if (result.changes === 1) {
         // Succes ! Enregistrer/mettre a jour l'etudiant

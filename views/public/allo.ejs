@@ -58,6 +58,8 @@
                             <span class="theme-transport text-xs px-2 py-0.5 rounded-full font-medium mt-2 inline-block">Transport</span>
                         <% } else if (allo.theme === 'Allo Fun') { %>
                             <span class="theme-fun text-xs px-2 py-0.5 rounded-full font-medium mt-2 inline-block">Fun</span>
+                        <% } else if (allo.theme === 'Allo Démoniaque') { %>
+                            <span class="theme-demoniaque text-xs px-2 py-0.5 rounded-full font-medium mt-2 inline-block">Démoniaque</span>
                         <% } else { %>
                             <span class="theme-autres text-xs px-2 py-0.5 rounded-full font-medium mt-2 inline-block">Autres</span>
                         <% } %>
@@ -151,8 +153,36 @@
                             </div>
 
                             <div>
-                                <label for="address" class="block text-sm text-gray-400 mb-1">Adresse</label>
-                                <input type="text" id="address" name="address" required placeholder="i16 - 204"
+                                <label for="building" class="block text-sm text-gray-400 mb-1">Batiment</label>
+                                <select id="building" name="building" required
+                                        class="input w-full px-3 py-2 rounded-lg text-sm">
+                                    <option value="">Selectionner</option>
+                                    <option value="i01">i01</option>
+                                    <option value="i02">i02</option>
+                                    <option value="i03">i03</option>
+                                    <option value="i04">i04</option>
+                                    <option value="i05">i05</option>
+                                    <option value="i06">i06</option>
+                                    <option value="i07">i07</option>
+                                    <option value="i08">i08</option>
+                                    <option value="i09">i09</option>
+                                    <option value="i10">i10</option>
+                                    <option value="i11">i11</option>
+                                    <option value="i12">i12</option>
+                                    <option value="i13">i13</option>
+                                    <option value="i14">i14</option>
+                                    <option value="i15">i15</option>
+                                    <option value="Foyer">Foyer</option>
+                                    <option value="Archipelle">Archipelle</option>
+                                    <option value="Meridienne">Meridienne</option>
+                                    <option value="Centre Vie">Centre Vie</option>
+                                    <option value="KerStudy">KerStudy</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="room" class="block text-sm text-gray-400 mb-1">Numero</label>
+                                <input type="text" id="room" name="room" required placeholder="Ex: 203"
                                        class="input w-full px-3 py-2 rounded-lg text-sm">
                             </div>
 

@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
         const phone = document.getElementById('phone').value.trim();
-        const address = document.getElementById('address').value.trim();
+        const building = document.getElementById('building').value.trim();
+        const room = document.getElementById('room').value.trim();
         const alloId = alloIdInput.value;
 
         try {
@@ -27,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ firstName, lastName, phone, address })
+                body: JSON.stringify({ firstName, lastName, phone, building, room })
             });
 
             const data = await response.json();

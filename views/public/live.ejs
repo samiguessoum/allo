@@ -63,6 +63,9 @@
                     <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="Allo Fun">
                         Fun
                     </button>
+                    <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="Allo Démoniaque">
+                        Démoniaque
+                    </button>
                     <button class="filter-btn px-4 py-2 rounded-lg text-sm font-medium transition-all" data-filter="Autres Allo">
                         Autres
                     </button>
@@ -106,6 +109,8 @@
                                         <span class="theme-transport text-xs px-2 py-0.5 rounded-full font-medium mt-1 inline-block">Transport</span>
                                     <% } else if (allo.theme === 'Allo Fun') { %>
                                         <span class="theme-fun text-xs px-2 py-0.5 rounded-full font-medium mt-1 inline-block">Fun</span>
+                                    <% } else if (allo.theme === 'Allo Démoniaque') { %>
+                                        <span class="theme-demoniaque text-xs px-2 py-0.5 rounded-full font-medium mt-1 inline-block">Démoniaque</span>
                                     <% } else { %>
                                         <span class="theme-autres text-xs px-2 py-0.5 rounded-full font-medium mt-1 inline-block">Autres</span>
                                     <% } %>

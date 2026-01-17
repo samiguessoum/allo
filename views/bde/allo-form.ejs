@@ -71,6 +71,7 @@
                             <option value="Allo Pôle" <%= (allo && allo.theme === 'Allo Pôle') ? 'selected' : '' %>>Allo Pôle</option>
                             <option value="Allo Transport" <%= (allo && allo.theme === 'Allo Transport') ? 'selected' : '' %>>Allo Transport</option>
                             <option value="Allo Fun" <%= (allo && allo.theme === 'Allo Fun') ? 'selected' : '' %>>Allo Fun</option>
+                            <option value="Allo Démoniaque" <%= (allo && allo.theme === 'Allo Démoniaque') ? 'selected' : '' %>>Allo Démoniaque</option>
                             <option value="Autres Allo" <%= (!allo || allo.theme === 'Autres Allo') ? 'selected' : '' %>>Autres Allo</option>
                         </select>
                     </div>
@@ -92,7 +93,7 @@
                     <% if (!allo) { %>
                         <div>
                             <label for="nbSlots" class="block text-sm font-medium text-gray-700 mb-2">Nombre de slots *</label>
-                            <input type="number" id="nbSlots" name="nbSlots" required min="1" max="100" value="1"
+                            <input type="number" id="nbSlots" name="nbSlots" required min="1" value="1"
                                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-pink-500 focus:outline-none transition-colors text-gray-900">
                             <p class="text-xs text-gray-500 mt-1">Combien de personnes peuvent shotgun ?</p>
                         </div>

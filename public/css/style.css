@@ -286,6 +286,11 @@ select.input {
     color: white;
 }
 
+.theme-demoniaque {
+    background: linear-gradient(135deg, #111827 0%, #B91C1C 100%);
+    color: white;
+}
+
 /* Filter buttons */
 .filter-btn {
     background: var(--dark-light);

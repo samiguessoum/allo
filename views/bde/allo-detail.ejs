@@ -186,10 +186,47 @@
                         <p class="text-gray-500">Aucune reservation pour le moment</p>
                     </div>
                 <% } else { %>
-                    <div class="mb-4">
-                        <label for="address-search" class="block text-sm font-medium text-gray-600 mb-2">Recherche par adresse</label>
-                        <input type="text" id="address-search" placeholder="Ex: I12-203"
-                               class="w-full max-w-sm px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-pink-400">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+                        <div>
+                            <label for="address-search" class="block text-sm font-medium text-gray-600 mb-2">Recherche</label>
+                            <input type="text" id="address-search" placeholder="Nom, prenom, tel, adresse"
+                                   class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-pink-400">
+                        </div>
+                        <div>
+                            <label for="building-filter" class="block text-sm font-medium text-gray-600 mb-2">Batiment</label>
+                            <select id="building-filter" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-pink-400">
+                                <option value="all">Tous</option>
+                                <option value="i01">i01</option>
+                                <option value="i02">i02</option>
+                                <option value="i03">i03</option>
+                                <option value="i04">i04</option>
+                                <option value="i05">i05</option>
+                                <option value="i06">i06</option>
+                                <option value="i07">i07</option>
+                                <option value="i08">i08</option>
+                                <option value="i09">i09</option>
+                                <option value="i10">i10</option>
+                                <option value="i11">i11</option>
+                                <option value="i12">i12</option>
+                                <option value="i13">i13</option>
+                                <option value="i14">i14</option>
+                                <option value="i15">i15</option>
+                                <option value="Foyer">Foyer</option>
+                                <option value="Archipelle">Archipelle</option>
+                                <option value="Meridienne">Meridienne</option>
+                                <option value="Centre Vie">Centre Vie</option>
+                                <option value="KerStudy">KerStudy</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="delivery-filter" class="block text-sm font-medium text-gray-600 mb-2">Livraison</label>
+                            <select id="delivery-filter" class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-pink-400">
+                                <option value="all">Tous</option>
+                                <option value="todo">À livrer</option>
+                                <option value="in_progress">En cours</option>
+                                <option value="delivered">Livré</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
@@ -198,7 +235,9 @@
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">#</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Nom</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Telephone</th>
-                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Adresse</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Batiment</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Numero</th>
+                                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Statut</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Date</th>
                                     <th class="px-4 py-3 text-left text-sm font-semibold text-gray-700">Actions</th>
                                 </tr>
@@ -208,32 +247,67 @@
                                 <% slots.forEach((slot, index) => { %>
                                     <% if (slot.claimed_by_phone) { %>
                                         <% slotNum++; %>
-                                        <tr class="hover:bg-pink-50/50 transition-colors <%= slot.claimed_completed ? 'bg-red-50' : '' %>" data-address="<%= slot.claimed_by_address || '' %>">
+                                        <% const deliveryStatus = slot.delivery_status || 'todo'; %>
+                                        <tr class="hover:bg-pink-50/50 transition-colors <%= deliveryStatus === 'delivered' ? 'bg-red-50' : '' %>"
+                                            data-building="<%= slot.claimed_by_building || '' %>"
+                                            data-room="<%= slot.claimed_by_room || '' %>"
+                                            data-status="<%= deliveryStatus %>"
+                                            data-search="<%= (slot.claimed_by_name || '') + ' ' + (slot.claimed_by_phone || '') + ' ' + (slot.claimed_by_building || '') + ' ' + (slot.claimed_by_room || '') + ' ' + (slot.claimed_by_address || '') %>">
                                             <td class="px-4 py-3">
                                                 <span class="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white flex items-center justify-center text-sm font-bold">
                                                     <%= slotNum %>
                                                 </span>
                                             </td>
-                                            <td class="px-4 py-3 font-semibold <%= slot.claimed_completed ? 'text-red-700 line-through' : 'text-gray-800' %>"><%= slot.claimed_by_name %></td>
+                                            <td class="px-4 py-3 font-semibold <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-800' %>"><%= slot.claimed_by_name %></td>
                                             <td class="px-4 py-3">
-                                                <a href="tel:<%= slot.claimed_by_phone %>" class="<%= slot.claimed_completed ? 'text-red-700 line-through' : 'text-cyan-600 hover:text-cyan-700' %> font-medium">
+                                                <a href="tel:<%= slot.claimed_by_phone %>" class="<%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-cyan-600 hover:text-cyan-700' %> font-medium">
                                                     <%= slot.claimed_by_phone %>
                                                 </a>
                                             </td>
-                                            <td class="px-4 py-3 text-sm <%= slot.claimed_completed ? 'text-red-700 line-through' : 'text-gray-600' %>">
-                                                <%= slot.claimed_by_address || '-' %>
+                                            <td class="px-4 py-3 text-sm <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-600' %>">
+                                                <%= slot.claimed_by_building || '-' %>
                                             </td>
-                                            <td class="px-4 py-3 text-sm <%= slot.claimed_completed ? 'text-red-700 line-through' : 'text-gray-500' %>">
+                                            <td class="px-4 py-3 text-sm <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-600' %>">
+                                                <%= slot.claimed_by_room || '-' %>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm">
+                                                <% if (deliveryStatus === 'todo') { %>
+                                                    <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium">À livrer</span>
+                                                <% } else if (deliveryStatus === 'in_progress') { %>
+                                                    <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-medium">En cours</span>
+                                                <% } else { %>
+                                                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">Livré</span>
+                                                <% } %>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-500' %>">
                                                 <%= new Date(slot.claimed_at).toLocaleString('fr-FR') %>
                                             </td>
                                             <td class="px-4 py-3">
-                                                <% if (slot.claimed_completed) { %>
-                                                    <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-semibold">Fait</span>
-                                                <% } else { %>
-                                                    <form action="/bde/slot/<%= slot.id %>/complete" method="POST" class="inline"
-                                                          onsubmit="return confirm('Marquer comme fait ? L\\'etudiant pourra a nouveau shotgun un autre Allo's.')">
+                                                <% if (deliveryStatus === 'todo') { %>
+                                                    <form action="/bde/slot/<%= slot.id %>/in-progress" method="POST" class="inline">
+                                                        <button type="submit" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                                            En cours
+                                                        </button>
+                                                    </form>
+                                                <% } else if (deliveryStatus === 'in_progress') { %>
+                                                    <form action="/bde/slot/<%= slot.id %>/delivered" method="POST" class="inline"
+                                                          onsubmit="return confirm('Marquer comme livré ?')">
                                                         <button type="submit" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
-                                                            Fait
+                                                            Livré
+                                                        </button>
+                                                    </form>
+                                                    <form action="/bde/slot/<%= slot.id %>/reset" method="POST" class="inline ml-2"
+                                                          onsubmit="return confirm('Annuler la livraison en cours ?')">
+                                                        <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                                            Annuler
+                                                        </button>
+                                                    </form>
+                                                <% } else { %>
+                                                    <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-semibold">Livré</span>
+                                                    <form action="/bde/slot/<%= slot.id %>/reset" method="POST" class="inline ml-2"
+                                                          onsubmit="return confirm('Repasser a livrer ?')">
+                                                        <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                                            Annuler
                                                         </button>
                                                     </form>
                                                 <% } %>
@@ -268,16 +342,31 @@
 
     <script>
         const searchInput = document.getElementById('address-search');
-        if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                const query = this.value.trim().toLowerCase();
-                const rows = document.querySelectorAll('#participants-body tr');
-                rows.forEach(row => {
-                    const address = (row.dataset.address || '').toLowerCase();
-                    row.style.display = !query || address.includes(query) ? '' : 'none';
-                });
+        const buildingFilter = document.getElementById('building-filter');
+        const deliveryFilter = document.getElementById('delivery-filter');
+
+        function applyParticipantFilters() {
+            const query = (searchInput && searchInput.value || '').trim().toLowerCase();
+            const building = buildingFilter ? buildingFilter.value : 'all';
+            const status = deliveryFilter ? deliveryFilter.value : 'all';
+            const rows = document.querySelectorAll('#participants-body tr');
+
+            rows.forEach(row => {
+                const rowSearch = (row.dataset.search || '').toLowerCase();
+                const rowBuilding = (row.dataset.building || '').toLowerCase();
+                const rowStatus = row.dataset.status || '';
+
+                const matchesQuery = !query || rowSearch.includes(query);
+                const matchesBuilding = building === 'all' || rowBuilding === building.toLowerCase();
+                const matchesStatus = status === 'all' || rowStatus === status;
+
+                row.style.display = matchesQuery && matchesBuilding && matchesStatus ? '' : 'none';
             });
         }
+
+        if (searchInput) searchInput.addEventListener('input', applyParticipantFilters);
+        if (buildingFilter) buildingFilter.addEventListener('change', applyParticipantFilters);
+        if (deliveryFilter) deliveryFilter.addEventListener('change', applyParticipantFilters);
     </script>
 </body>
 </html>

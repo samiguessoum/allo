@@ -66,15 +66,15 @@ router.post('/allo/new', (req, res) => {
     }
 
     const slots = parseInt(nbSlots);
-    if (isNaN(slots) || slots < 1 || slots > 100) {
+    if (isNaN(slots) || slots < 1) {
         return res.render('bde/allo-form', {
             allo: req.body,
-            error: 'Le nombre de slots doit etre entre 1 et 100'
+            error: 'Le nombre de slots doit etre superieur ou egal a 1'
         });
     }
 
     // Valider le theme
-    const validThemes = ['Allo Nourriture', 'Allo Pôle', 'Allo Transport', 'Allo Fun', 'Autres Allo'];
+    const validThemes = ['Allo Nourriture', 'Allo Pôle', 'Allo Transport', 'Allo Fun', 'Allo Démoniaque', 'Autres Allo'];
     const selectedTheme = validThemes.includes(theme) ? theme : 'Autres Allo';
 
     try {
@@ -149,7 +149,7 @@ router.post('/allo/:id/edit', (req, res) => {
     }
 
     // Valider le theme
-    const validThemes = ['Allo Nourriture', 'Allo Pôle', 'Allo Transport', 'Allo Fun', 'Autres Allo'];
+    const validThemes = ['Allo Nourriture', 'Allo Pôle', 'Allo Transport', 'Allo Fun', 'Allo Démoniaque', 'Autres Allo'];
     const selectedTheme = validThemes.includes(theme) ? theme : 'Autres Allo';
 
     try {
@@ -310,12 +310,7 @@ router.post('/allo/:id/delete', (req, res) => {
     res.redirect('/bde/dashboard');
 });
 
-// Marquer un slot comme "fait" (libere l'etudiant pour qu'il puisse re-shotgun)
-router.post('/slot/:slotId/complete', (req, res) => {
-    const slotId = req.params.slotId;
-    const bdeListId = req.session.user.bdeListId;
-
-    // Verifier que le slot existe et appartient a un ALLO de ma liste BDE
+function updateDeliveryStatus(slotId, bdeListId, status, res) {
     const slot = db.prepare(`
         SELECT s.*, a.bde_list_id, a.id as allo_id
         FROM allo_slots s
@@ -324,21 +319,39 @@ router.post('/slot/:slotId/complete', (req, res) => {
     `).get(slotId);
 
     if (!slot) {
-        return res.status(404).send('Slot non trouve');
+        res.status(404).send('Slot non trouve');
+        return;
     }
 
     if (slot.bde_list_id !== bdeListId) {
-        return res.status(403).send('Acces non autorise');
+        res.status(403).send('Acces non autorise');
+        return;
     }
 
-    // Marquer comme fait sans liberer le slot
     db.prepare(`
         UPDATE allo_slots
-        SET claimed_completed = 1
+        SET delivery_status = ?
         WHERE id = ?
-    `).run(slotId);
+    `).run(status, slotId);
 
     res.redirect(`/bde/allo/${slot.allo_id}`);
+}
+
+router.post('/slot/:slotId/in-progress', (req, res) => {
+    updateDeliveryStatus(req.params.slotId, req.session.user.bdeListId, 'in_progress', res);
+});
+
+router.post('/slot/:slotId/delivered', (req, res) => {
+    updateDeliveryStatus(req.params.slotId, req.session.user.bdeListId, 'delivered', res);
+});
+
+router.post('/slot/:slotId/reset', (req, res) => {
+    updateDeliveryStatus(req.params.slotId, req.session.user.bdeListId, 'todo', res);
+});
+
+// Compat: ancien bouton "Fait"
+router.post('/slot/:slotId/complete', (req, res) => {
+    updateDeliveryStatus(req.params.slotId, req.session.user.bdeListId, 'delivered', res);
 });
 
 module.exports = router;
