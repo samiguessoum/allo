@@ -189,20 +189,7 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
         });
     }
 
-    // Verifier la limite de 4 shotguns max sur les ALLO publies
-    const currentReservations = db.prepare(`
-        SELECT COUNT(*) as count
-        FROM allo_slots s
-        JOIN allos a ON s.allo_id = a.id
-        WHERE s.claimed_by_phone = ? AND a.status = 'PUBLISHED'
-    `).get(cleanPhone);
-
-    if (currentReservations.count >= 4) {
-        return res.status(400).json({
-            success: false,
-            message: 'Tu as deja 4 reservations en cours ! Attends qu\'un Allo\'s soit termine pour en reserver un autre.'
-        });
-    }
+    // Pas de limite de reservations simultanees
 
     // SHOTGUN ATOMIQUE - UPDATE avec WHERE claimed_by_phone IS NULL
     const fullName = `${firstName} ${lastName}`;
