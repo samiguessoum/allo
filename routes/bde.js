@@ -354,4 +354,42 @@ router.post('/slot/:slotId/complete', (req, res) => {
     updateDeliveryStatus(req.params.slotId, req.session.user.bdeListId, 'delivered', res);
 });
 
+router.post('/slot/:slotId/delete', (req, res) => {
+    const slotId = req.params.slotId;
+    const bdeListId = req.session.user.bdeListId;
+
+    const slot = db.prepare(`
+        SELECT s.*, a.bde_list_id, a.id as allo_id
+        FROM allo_slots s
+        JOIN allos a ON s.allo_id = a.id
+        WHERE s.id = ?
+    `).get(slotId);
+
+    if (!slot) {
+        return res.status(404).send('Slot non trouve');
+    }
+
+    if (slot.bde_list_id !== bdeListId) {
+        return res.status(403).send('Acces non autorise');
+    }
+
+    db.prepare(`
+        UPDATE allo_slots
+        SET claimed_by_name = NULL,
+            claimed_by_phone = NULL,
+            claimed_by_address = NULL,
+            claimed_by_building = NULL,
+            claimed_by_room = NULL,
+            delivery_status = 'todo',
+            claimed_at = NULL
+        WHERE id = ?
+    `).run(slotId);
+
+    if (req.get('X-Requested-With') === 'fetch') {
+        return res.status(204).end();
+    }
+
+    res.redirect(`/bde/allo/${slot.allo_id}`);
+});
+
 module.exports = router;

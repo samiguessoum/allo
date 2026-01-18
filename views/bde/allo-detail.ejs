@@ -175,7 +175,7 @@
             <div class="p-6">
                 <h2 class="font-semibold text-gray-800 mb-4 flex items-center justify-between">
                     Reservations
-                    <span class="bg-gradient-to-r from-pink-500 to-purple-500 text-white text-sm px-3 py-1 rounded-full">
+                    <span id="claimed-count" data-total="<%= slots.length %>" class="bg-gradient-to-r from-pink-500 to-purple-500 text-white text-sm px-3 py-1 rounded-full">
                         <%= slots.filter(s => s.claimed_by_phone).length %>/<%= slots.length %>
                     </span>
                 </h2>
@@ -293,6 +293,11 @@
                                                             En cours
                                                         </button>
                                                     </form>
+                                                    <form action="/bde/slot/<%= slot.id %>/delete" method="POST" class="inline ml-2" data-delete-form data-confirm="Supprimer cette reservation ?">
+                                                        <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                                            Supprimer
+                                                        </button>
+                                                    </form>
                                                 <% } else if (deliveryStatus === 'in_progress') { %>
                                                     <form action="/bde/slot/<%= slot.id %>/delivered" method="POST" class="inline" data-delivery-form data-status="delivered" data-confirm="Marquer comme livré ?">
                                                         <button type="submit" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
@@ -304,11 +309,21 @@
                                                             Annuler
                                                         </button>
                                                     </form>
+                                                    <form action="/bde/slot/<%= slot.id %>/delete" method="POST" class="inline ml-2" data-delete-form data-confirm="Supprimer cette reservation ?">
+                                                        <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                                            Supprimer
+                                                        </button>
+                                                    </form>
                                                 <% } else { %>
                                                     <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-semibold">Livré</span>
                                                     <form action="/bde/slot/<%= slot.id %>/reset" method="POST" class="inline ml-2" data-delivery-form data-status="todo" data-confirm="Repasser a livrer ?">
                                                         <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
                                                             Annuler
+                                                        </button>
+                                                    </form>
+                                                    <form action="/bde/slot/<%= slot.id %>/delete" method="POST" class="inline ml-2" data-delete-form data-confirm="Supprimer cette reservation ?">
+                                                        <button type="submit" class="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                                            Supprimer
                                                         </button>
                                                     </form>
                                                 <% } %>
@@ -322,14 +337,12 @@
                 <% } %>
 
                 <% const availableSlots = slots.filter(s => !s.claimed_by_phone); %>
-                <% if (availableSlots.length > 0) { %>
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <p class="text-sm text-gray-500 flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-green-500 to-cyan-500"></span>
-                            <span class="font-semibold text-green-600"><%= availableSlots.length %></span> slot(s) encore disponible(s)
-                        </p>
-                    </div>
-                <% } %>
+                <div id="available-slots-info" class="mt-4 pt-4 border-t border-gray-200 <%= availableSlots.length > 0 ? '' : 'hidden' %>">
+                    <p class="text-sm text-gray-500 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-gradient-to-r from-green-500 to-cyan-500"></span>
+                        <span id="available-count" class="font-semibold text-green-600"><%= availableSlots.length %></span> slot(s) encore disponible(s)
+                    </p>
+                </div>
             </div>
         </div>
     </main>
@@ -443,9 +456,32 @@
             }
         }
 
-        function attachDeliveryHandlers(root = document) {
-            const forms = root.querySelectorAll('[data-delivery-form]');
-            forms.forEach(form => {
+        function renumberRows() {
+            const rows = document.querySelectorAll('#participants-body tr');
+            let index = 1;
+            rows.forEach(row => {
+                if (row.style.display === 'none') return;
+                const badge = row.querySelector('td span');
+                if (badge) badge.textContent = index++;
+            });
+        }
+
+        function updateCounts() {
+            const total = parseInt(document.getElementById('claimed-count')?.dataset.total || '0', 10);
+            const claimed = document.querySelectorAll('#participants-body tr').length;
+            const claimedBadge = document.getElementById('claimed-count');
+            if (claimedBadge) claimedBadge.textContent = `${claimed}/${total}`;
+
+            const available = Math.max(total - claimed, 0);
+            const availableInfo = document.getElementById('available-slots-info');
+            const availableCount = document.getElementById('available-count');
+            if (availableCount) availableCount.textContent = `${available}`;
+            if (availableInfo) availableInfo.classList.toggle('hidden', available === 0);
+        }
+
+        function attachActionHandlers(root = document) {
+            const deliveryForms = root.querySelectorAll('[data-delivery-form]');
+            deliveryForms.forEach(form => {
                 form.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     const confirmMsg = form.dataset.confirm;
@@ -464,7 +500,35 @@
                         if (row && status) {
                             updateDeliveryUI(row, status);
                             applyParticipantFilters();
-                            attachDeliveryHandlers(row);
+                            attachActionHandlers(row);
+                        }
+                    } catch (err) {
+                        alert('Une erreur est survenue.');
+                    }
+                });
+            });
+
+            const deleteForms = root.querySelectorAll('[data-delete-form]');
+            deleteForms.forEach(form => {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const confirmMsg = form.dataset.confirm;
+                    if (confirmMsg && !confirm(confirmMsg)) return;
+                    const row = form.closest('tr');
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: { 'X-Requested-With': 'fetch' }
+                        });
+                        if (!response.ok) {
+                            alert('Une erreur est survenue.');
+                            return;
+                        }
+                        if (row) {
+                            row.remove();
+                            renumberRows();
+                            updateCounts();
+                            applyParticipantFilters();
                         }
                     } catch (err) {
                         alert('Une erreur est survenue.');
@@ -473,7 +537,7 @@
             });
         }
 
-        attachDeliveryHandlers();
+        attachActionHandlers();
     </script>
 </body>
 </html>
