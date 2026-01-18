@@ -255,60 +255,58 @@
                                             data-building="<%= slot.claimed_by_building || '' %>"
                                             data-room="<%= slot.claimed_by_room || '' %>"
                                             data-status="<%= deliveryStatus %>"
+                                            data-slot-id="<%= slot.id %>"
                                             data-search="<%= (slot.claimed_by_name || '') + ' ' + (slot.claimed_by_phone || '') + ' ' + (slot.claimed_by_building || '') + ' ' + (slot.claimed_by_room || '') + ' ' + (slot.claimed_by_address || '') %>">
                                             <td class="px-4 py-3">
                                                 <span class="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white flex items-center justify-center text-sm font-bold">
                                                     <%= slotNum %>
                                                 </span>
                                             </td>
-                                            <td class="px-4 py-3 font-semibold <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-800' %>"><%= slot.claimed_by_name %></td>
+                                            <td class="px-4 py-3 font-semibold delivery-text <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-800' %>"><%= slot.claimed_by_name %></td>
                                             <td class="px-4 py-3">
-                                                <a href="tel:<%= slot.claimed_by_phone %>" class="<%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-cyan-600 hover:text-cyan-700' %> font-medium">
+                                                <a href="tel:<%= slot.claimed_by_phone %>" class="delivery-link <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-cyan-600 hover:text-cyan-700' %> font-medium">
                                                     <%= slot.claimed_by_phone %>
                                                 </a>
                                             </td>
-                                            <td class="px-4 py-3 text-sm <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-600' %>">
+                                            <td class="px-4 py-3 text-sm delivery-text <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-600' %>">
                                                 <%= slot.claimed_by_building || '-' %>
                                             </td>
-                                            <td class="px-4 py-3 text-sm <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-600' %>">
+                                            <td class="px-4 py-3 text-sm delivery-text <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-600' %>">
                                                 <%= slot.claimed_by_room || '-' %>
                                             </td>
                                             <td class="px-4 py-3 text-sm">
                                                 <% if (deliveryStatus === 'todo') { %>
-                                                    <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium">À livrer</span>
+                                                    <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium" data-status-badge>À livrer</span>
                                                 <% } else if (deliveryStatus === 'in_progress') { %>
-                                                    <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-medium">En cours</span>
+                                                    <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-medium" data-status-badge>En cours</span>
                                                 <% } else { %>
-                                                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">Livré</span>
+                                                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium" data-status-badge>Livré</span>
                                                 <% } %>
                                             </td>
-                                            <td class="px-4 py-3 text-sm <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-500' %>">
+                                            <td class="px-4 py-3 text-sm delivery-text <%= deliveryStatus === 'delivered' ? 'text-red-700 line-through' : 'text-gray-500' %>">
                                                 <%= new Date(slot.claimed_at).toLocaleString('fr-FR') %>
                                             </td>
-                                            <td class="px-4 py-3">
+                                            <td class="px-4 py-3" data-actions>
                                                 <% if (deliveryStatus === 'todo') { %>
-                                                    <form action="/bde/slot/<%= slot.id %>/in-progress" method="POST" class="inline">
+                                                    <form action="/bde/slot/<%= slot.id %>/in-progress" method="POST" class="inline" data-delivery-form data-status="in_progress">
                                                         <button type="submit" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
                                                             En cours
                                                         </button>
                                                     </form>
                                                 <% } else if (deliveryStatus === 'in_progress') { %>
-                                                    <form action="/bde/slot/<%= slot.id %>/delivered" method="POST" class="inline"
-                                                          onsubmit="return confirm('Marquer comme livré ?')">
+                                                    <form action="/bde/slot/<%= slot.id %>/delivered" method="POST" class="inline" data-delivery-form data-status="delivered" data-confirm="Marquer comme livré ?">
                                                         <button type="submit" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
                                                             Livré
                                                         </button>
                                                     </form>
-                                                    <form action="/bde/slot/<%= slot.id %>/reset" method="POST" class="inline ml-2"
-                                                          onsubmit="return confirm('Annuler la livraison en cours ?')">
+                                                    <form action="/bde/slot/<%= slot.id %>/reset" method="POST" class="inline ml-2" data-delivery-form data-status="todo" data-confirm="Annuler la livraison en cours ?">
                                                         <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
                                                             Annuler
                                                         </button>
                                                     </form>
                                                 <% } else { %>
                                                     <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-semibold">Livré</span>
-                                                    <form action="/bde/slot/<%= slot.id %>/reset" method="POST" class="inline ml-2"
-                                                          onsubmit="return confirm('Repasser a livrer ?')">
+                                                    <form action="/bde/slot/<%= slot.id %>/reset" method="POST" class="inline ml-2" data-delivery-form data-status="todo" data-confirm="Repasser a livrer ?">
                                                         <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
                                                             Annuler
                                                         </button>
@@ -370,6 +368,112 @@
         if (searchInput) searchInput.addEventListener('input', applyParticipantFilters);
         if (buildingFilter) buildingFilter.addEventListener('change', applyParticipantFilters);
         if (deliveryFilter) deliveryFilter.addEventListener('change', applyParticipantFilters);
+
+        function updateDeliveryUI(row, status) {
+            row.dataset.status = status;
+            row.classList.toggle('bg-red-50', status === 'delivered');
+
+            const texts = row.querySelectorAll('.delivery-text');
+            const link = row.querySelector('.delivery-link');
+            const badge = row.querySelector('[data-status-badge]');
+            const actions = row.querySelector('[data-actions]');
+            const slotId = row.dataset.slotId;
+
+            texts.forEach(el => {
+                el.classList.toggle('line-through', status === 'delivered');
+                el.classList.toggle('text-red-700', status === 'delivered');
+                el.classList.toggle('text-gray-800', status !== 'delivered' && el.classList.contains('font-semibold'));
+                el.classList.toggle('text-gray-600', status !== 'delivered' && el.classList.contains('text-sm'));
+                el.classList.toggle('text-gray-500', status !== 'delivered' && el.classList.contains('text-gray-500'));
+            });
+
+            if (link) {
+                link.classList.toggle('line-through', status === 'delivered');
+                link.classList.toggle('text-red-700', status === 'delivered');
+                link.classList.toggle('text-cyan-600', status !== 'delivered');
+                link.classList.toggle('hover:text-cyan-700', status !== 'delivered');
+            }
+
+            if (badge) {
+                if (status === 'todo') {
+                    badge.textContent = 'À livrer';
+                    badge.className = 'bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs font-medium';
+                } else if (status === 'in_progress') {
+                    badge.textContent = 'En cours';
+                    badge.className = 'bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-medium';
+                } else {
+                    badge.textContent = 'Livré';
+                    badge.className = 'bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium';
+                }
+                badge.setAttribute('data-status-badge', '');
+            }
+
+            if (actions && slotId) {
+                if (status === 'todo') {
+                    actions.innerHTML = `
+                        <form action="/bde/slot/${slotId}/in-progress" method="POST" class="inline" data-delivery-form data-status="in_progress">
+                            <button type="submit" class="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                En cours
+                            </button>
+                        </form>
+                    `;
+                } else if (status === 'in_progress') {
+                    actions.innerHTML = `
+                        <form action="/bde/slot/${slotId}/delivered" method="POST" class="inline" data-delivery-form data-status="delivered" data-confirm="Marquer comme livré ?">
+                            <button type="submit" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                Livré
+                            </button>
+                        </form>
+                        <form action="/bde/slot/${slotId}/reset" method="POST" class="inline ml-2" data-delivery-form data-status="todo" data-confirm="Annuler la livraison en cours ?">
+                            <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                Annuler
+                            </button>
+                        </form>
+                    `;
+                } else {
+                    actions.innerHTML = `
+                        <span class="inline-block bg-red-100 text-red-700 px-3 py-1 rounded-lg text-xs font-semibold">Livré</span>
+                        <form action="/bde/slot/${slotId}/reset" method="POST" class="inline ml-2" data-delivery-form data-status="todo" data-confirm="Repasser a livrer ?">
+                            <button type="submit" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium transition-all">
+                                Annuler
+                            </button>
+                        </form>
+                    `;
+                }
+            }
+        }
+
+        function attachDeliveryHandlers(root = document) {
+            const forms = root.querySelectorAll('[data-delivery-form]');
+            forms.forEach(form => {
+                form.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    const confirmMsg = form.dataset.confirm;
+                    if (confirmMsg && !confirm(confirmMsg)) return;
+                    const row = form.closest('tr');
+                    const status = form.dataset.status;
+                    try {
+                        const response = await fetch(form.action, {
+                            method: 'POST',
+                            headers: { 'X-Requested-With': 'fetch' }
+                        });
+                        if (!response.ok) {
+                            alert('Une erreur est survenue.');
+                            return;
+                        }
+                        if (row && status) {
+                            updateDeliveryUI(row, status);
+                            applyParticipantFilters();
+                            attachDeliveryHandlers(row);
+                        }
+                    } catch (err) {
+                        alert('Une erreur est survenue.');
+                    }
+                });
+            });
+        }
+
+        attachDeliveryHandlers();
     </script>
 </body>
 </html>
