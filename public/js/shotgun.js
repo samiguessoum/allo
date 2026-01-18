@@ -7,6 +7,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const messageDiv = document.getElementById('shotgun-message');
     const alloIdInput = document.getElementById('allo-id');
 
+    const buildingSelect = document.getElementById('building');
+    const otherWrapper = document.getElementById('other-building-wrapper');
+    const otherInput = document.getElementById('buildingOther');
+
+    if (buildingSelect && otherWrapper && otherInput) {
+        buildingSelect.addEventListener('change', function() {
+            const isOther = this.value === 'Autre';
+            otherWrapper.classList.toggle('hidden', !isOther);
+            otherInput.required = isOther;
+            if (!isOther) {
+                otherInput.value = '';
+            }
+        });
+    }
+
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
@@ -20,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const phone = document.getElementById('phone').value.trim();
         const building = document.getElementById('building').value.trim();
         const room = document.getElementById('room').value.trim();
+        const buildingOther = document.getElementById('buildingOther')?.value.trim() || '';
         const alloId = alloIdInput.value;
 
         try {
@@ -28,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ firstName, lastName, phone, building, room })
+                body: JSON.stringify({ firstName, lastName, phone, building, room, buildingOther })
             });
 
             const data = await response.json();

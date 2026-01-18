@@ -115,7 +115,7 @@ router.get('/allo/:id', (req, res) => {
 // SHOTGUN - Réserver un slot (POST avec JSON)
 router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
     const alloId = req.params.alloId;
-    const { firstName, lastName, phone, building, room } = req.body;
+    const { firstName, lastName, phone, building, room, buildingOther } = req.body;
 
     // Validations
     if (!firstName || !lastName || !phone || !building || !room) {
@@ -129,7 +129,16 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
     const cleanPhone = phone.replace(/\s/g, '');
     const cleanBuilding = building.trim();
     const cleanRoom = room.trim();
-    const combinedAddress = `${cleanBuilding} ${cleanRoom}`.trim();
+    const cleanOther = (buildingOther || '').trim();
+    if (cleanBuilding === 'Autre' && !cleanOther) {
+        return res.status(400).json({
+            success: false,
+            message: 'Merci de renseigner l\'adresse pour "Autre"'
+        });
+    }
+
+    const displayBuilding = cleanBuilding === 'Autre' ? cleanOther : cleanBuilding;
+    const combinedAddress = `${displayBuilding} ${cleanRoom}`.trim();
 
     // Verifier que l'ALLO existe et est publie
     const allo = db.prepare(`
@@ -207,7 +216,7 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
             ORDER BY id
             LIMIT 1
         ) AND claimed_by_phone IS NULL
-    `).run(fullName, cleanPhone, combinedAddress, cleanBuilding, cleanRoom, alloId);
+    `).run(fullName, cleanPhone, combinedAddress, displayBuilding, cleanRoom, alloId);
 
     if (result.changes === 1) {
         // Succes ! Enregistrer/mettre a jour l'etudiant
