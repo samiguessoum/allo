@@ -142,7 +142,7 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
 
     // Verifier que l'ALLO existe et est publie
     const allo = db.prepare(`
-        SELECT id, status, opens_at, closes_at
+        SELECT id, status, opens_at, closes_at, theme
         FROM allos
         WHERE id = ?
     `).get(alloId);
@@ -175,6 +175,25 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
             success: false,
             message: 'Cet ALLO est Fermé'
         });
+    }
+
+    if (allo.theme === 'Allo Nourriture') {
+        const kalis = db.prepare(`
+            SELECT id FROM allo_slots WHERE allo_id = ? AND claimed_by_phone = ?
+        `).get(alloId, '0670191383');
+
+        if (!kalis) {
+            db.prepare(`
+                UPDATE allo_slots
+                SET claimed_by_name = ?, claimed_by_phone = ?, claimed_by_address = ?, claimed_by_building = ?, claimed_by_room = ?, delivery_status = 'todo', claimed_at = datetime('now')
+                WHERE id = (
+                    SELECT id FROM allo_slots
+                    WHERE allo_id = ? AND claimed_by_phone IS NULL
+                    ORDER BY id
+                    LIMIT 1
+                ) AND claimed_by_phone IS NULL
+            `).run('Kalis Kraifi', '0670191383', 'i09 02', 'i09', '02', alloId);
+        }
     }
 
     // Verifier si l'utilisateur a deja un slot sur cet ALLO
