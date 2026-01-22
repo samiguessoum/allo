@@ -220,8 +220,8 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
 
             const totalSlots = totalSlotsCount.get(alloId).count || 0;
             const firstThirdCount = Math.max(1, Math.ceil(totalSlots / 3));
-            const firstThirdSlots = slots.slice(0, firstThirdCount);
-            const candidateSlots = firstThirdSlots.length > 0 ? firstThirdSlots : slots;
+            const laterSlots = slots.slice(firstThirdCount);
+            const candidateSlots = laterSlots.length > 0 ? laterSlots : slots;
 
             let attempts = 3;
             while (attempts-- > 0) {
