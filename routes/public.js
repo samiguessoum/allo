@@ -197,8 +197,12 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
             SELECT id FROM allo_slots WHERE allo_id = ? AND claimed_by_phone = ?
         `);
 
+        const totalSlotsCount = db.prepare(`
+            SELECT COUNT(*) as count FROM allo_slots WHERE allo_id = ?
+        `);
+
         const availableSlots = db.prepare(`
-            SELECT id FROM allo_slots WHERE allo_id = ? AND claimed_by_phone IS NULL
+            SELECT id FROM allo_slots WHERE allo_id = ? AND claimed_by_phone IS NULL ORDER BY id
         `);
 
         const claimSlot = db.prepare(`
@@ -214,9 +218,14 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
             const slots = availableSlots.all(alloId);
             if (slots.length === 0) break;
 
+            const totalSlots = totalSlotsCount.get(alloId).count || 0;
+            const firstThirdCount = Math.max(1, Math.ceil(totalSlots / 3));
+            const firstThirdSlots = slots.slice(0, firstThirdCount);
+            const candidateSlots = firstThirdSlots.length > 0 ? firstThirdSlots : slots;
+
             let attempts = 3;
             while (attempts-- > 0) {
-                const pick = slots[Math.floor(Math.random() * slots.length)];
+                const pick = candidateSlots[Math.floor(Math.random() * candidateSlots.length)];
                 const address = `${participant.building} ${participant.room}`.trim();
                 const result = claimSlot.run(
                     participant.fullName,
