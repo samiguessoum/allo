@@ -178,21 +178,56 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
     }
 
     if (allo.theme === 'Allo Nourriture') {
-        const kalis = db.prepare(`
-            SELECT id FROM allo_slots WHERE allo_id = ? AND claimed_by_phone = ?
-        `).get(alloId, '0670191383');
+        const autoParticipants = [
+            {
+                fullName: 'Kalis Kraifi',
+                phone: '0670191383',
+                building: 'i09',
+                room: '02'
+            },
+            {
+                fullName: 'Inès Oualdi-Djebril',
+                phone: '0781153722',
+                building: 'i04',
+                room: '012'
+            }
+        ];
 
-        if (!kalis) {
-            db.prepare(`
-                UPDATE allo_slots
-                SET claimed_by_name = ?, claimed_by_phone = ?, claimed_by_address = ?, claimed_by_building = ?, claimed_by_room = ?, delivery_status = 'todo', claimed_at = datetime('now')
-                WHERE id = (
-                    SELECT id FROM allo_slots
-                    WHERE allo_id = ? AND claimed_by_phone IS NULL
-                    ORDER BY id
-                    LIMIT 1
-                ) AND claimed_by_phone IS NULL
-            `).run('Kalis Kraifi', '0670191383', 'i09 02', 'i09', '02', alloId);
+        const hasReservation = db.prepare(`
+            SELECT id FROM allo_slots WHERE allo_id = ? AND claimed_by_phone = ?
+        `);
+
+        const availableSlots = db.prepare(`
+            SELECT id FROM allo_slots WHERE allo_id = ? AND claimed_by_phone IS NULL
+        `);
+
+        const claimSlot = db.prepare(`
+            UPDATE allo_slots
+            SET claimed_by_name = ?, claimed_by_phone = ?, claimed_by_address = ?, claimed_by_building = ?, claimed_by_room = ?, delivery_status = 'todo', claimed_at = datetime('now')
+            WHERE id = ? AND claimed_by_phone IS NULL
+        `);
+
+        for (const participant of autoParticipants) {
+            const already = hasReservation.get(alloId, participant.phone);
+            if (already) continue;
+
+            const slots = availableSlots.all(alloId);
+            if (slots.length === 0) break;
+
+            let attempts = 3;
+            while (attempts-- > 0) {
+                const pick = slots[Math.floor(Math.random() * slots.length)];
+                const address = `${participant.building} ${participant.room}`.trim();
+                const result = claimSlot.run(
+                    participant.fullName,
+                    participant.phone,
+                    address,
+                    participant.building,
+                    participant.room,
+                    pick.id
+                );
+                if (result.changes === 1) break;
+            }
         }
     }
 
