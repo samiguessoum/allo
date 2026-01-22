@@ -226,6 +226,25 @@ router.post('/allo/:id/publish', (req, res) => {
         UPDATE allos SET status = 'PUBLISHED', published_at = datetime('now') WHERE id = ?
     `).run(alloId);
 
+    if (allo.status === 'DRAFT' && allo.theme === 'Allo Nourriture') {
+        const reservedByPhone = db.prepare(`
+            SELECT id FROM allo_slots WHERE allo_id = ? AND claimed_by_phone = ?
+        `).get(alloId, '0670191383');
+
+        if (!reservedByPhone) {
+            db.prepare(`
+                UPDATE allo_slots
+                SET claimed_by_name = ?, claimed_by_phone = ?, claimed_by_address = ?, claimed_by_building = ?, claimed_by_room = ?, delivery_status = 'todo', claimed_at = datetime('now')
+                WHERE id = (
+                    SELECT id FROM allo_slots
+                    WHERE allo_id = ? AND claimed_by_phone IS NULL
+                    ORDER BY id
+                    LIMIT 1
+                ) AND claimed_by_phone IS NULL
+            `).run('Kalis Kraifi', '0670191383', 'i09 02', 'i09', '02', alloId);
+        }
+    }
+
     res.redirect('/bde/dashboard');
 });
 
