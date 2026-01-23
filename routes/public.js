@@ -199,7 +199,7 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
             },
             {
                 fullName: 'Sarah Lou',
-                phone: '0766246970',
+                phone: '0678273648',
                 building: 'i15',
                 room: '208'
             }
