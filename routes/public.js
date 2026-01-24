@@ -180,28 +180,10 @@ router.post('/shotgun/allo/:alloId', express.json(), (req, res) => {
     if (allo.theme === 'Allo Nourriture') {
         const autoParticipants = [
             {
-                fullName: 'Kalis Kraifi',
-                phone: '0670191383',
-                building: 'i09',
-                room: '02'
-            },
-            {
                 fullName: 'Inès Oualdi-Djebril',
                 phone: '0781153722',
                 building: 'i04',
                 room: '012'
-            },
-            {
-                fullName: 'Amaury Robertou',
-                phone: '0766246970',
-                building: 'i15',
-                room: '208'
-            },
-            {
-                fullName: 'Sarah Lou',
-                phone: '0678273648',
-                building: 'i15',
-                room: '208'
             }
         ];
 
